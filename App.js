@@ -2,24 +2,24 @@ import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Login from "./screens/Login";
-import { NavigationContainer } from "@react-navigation/native";
 import Register from "./screens/Register";
-import { AntDesign } from "@expo/vector-icons";
+import Main from "./screens/Main";
+import Search from "./screens/Search";
+import Trade from "./screens/Trade";
+import Portfolio from "./screens/Portfolio";
+import Settings from "./screens/Settings";
+import { NavigationContainer } from "@react-navigation/native";
+import { AntDesign, FontAwesome5 } from "@expo/vector-icons";
+
 const Tab = createBottomTabNavigator();
 
 export default function App() {
   return (
-    <View style={{ flex: 1 }}>
-      <Login />
-    </View>
-  );
-
-  /*<NavigationContainer>
+    <NavigationContainer>
       <Tab.Navigator
         screenOptions={{
           tabBarShowLabel: false,
           headerShown: false,
-
           tabBarStyle: {
             position: "absolute",
             borderRadius: 20,
@@ -31,9 +31,9 @@ export default function App() {
           },
         }}
       >
-         <Tab.Screen
-          name="Login"
-          component={Login}
+        <Tab.Screen
+          name="Main"
+          component={Main}
           options={{
             tabBarIcon: ({ focused }) => {
               return (
@@ -49,15 +49,40 @@ export default function App() {
                     size={focused ? 32 : 24}
                     color={focused ? "red" : "blue"}
                   />
-                  <Text style={{ color: "black" }}>HOME</Text>
+                  <Text style={{ color: "black" }}>Ana Menü</Text>
+                </View>
+              );
+            },
+          }}
+        />
+
+        <Tab.Screen
+          name="Search"
+          component={Search}
+          options={{
+            tabBarIcon: ({ focused }) => {
+              return (
+                <View
+                  style={{
+                    alignItems: "center",
+                    justifyContent: "center",
+                    position: "absolute",
+                  }}
+                >
+                  <AntDesign
+                    name="search1"
+                    size={focused ? 32 : 24}
+                    color={focused ? "red" : "blue"}
+                  />
+                  <Text style={{ color: "black" }}>Arama</Text>
                 </View>
               );
             },
           }}
         />
         <Tab.Screen
-          name="Register"
-          component={Register}
+          name="Trade"
+          component={Trade}
           options={{
             tabBarIcon: ({ focused }) => {
               return (
@@ -68,44 +93,21 @@ export default function App() {
                     position: "absolute",
                   }}
                 >
-                  <AntDesign
-                    name="home"
+                  <FontAwesome5
+                    name="exchange-alt"
                     size={focused ? 32 : 24}
                     color={focused ? "red" : "blue"}
                   />
-                  <Text style={{ color: "black" }}>HOME</Text>
-                </View>
-              );
-            },
-          }}
-        />
-         <Tab.Screen
-          name="Register"
-          component={Register}
-          options={{
-            tabBarIcon: ({ focused }) => {
-              return (
-                <View
-                  style={{
-                    alignItems: "center",
-                    justifyContent: "center",
-                    position: "absolute",
-                  }}
-                >
-                  <AntDesign
-                    name="home"
-                    size={focused ? 32 : 24}
-                    color={focused ? "red" : "blue"}
-                  />
-                  <Text style={{ color: "black" }}>HOME</Text>
+
+                  <Text style={{ color: "black" }}>Al Sat</Text>
                 </View>
               );
             },
           }}
         />
         <Tab.Screen
-          name="Register"
-          component={Register}
+          name="Portfolio"
+          component={Portfolio}
           options={{
             tabBarIcon: ({ focused }) => {
               return (
@@ -117,19 +119,19 @@ export default function App() {
                   }}
                 >
                   <AntDesign
-                    name="home"
+                    name="wallet"
                     size={focused ? 32 : 24}
                     color={focused ? "red" : "blue"}
                   />
-                  <Text style={{ color: "black" }}>HOME</Text>
+                  <Text style={{ color: "black" }}>Portfolio</Text>
                 </View>
               );
             },
           }}
         />
         <Tab.Screen
-          name="Register"
-          component={Register}
+          name="Settings"
+          component={Settings}
           options={{
             tabBarIcon: ({ focused }) => {
               return (
@@ -141,18 +143,19 @@ export default function App() {
                   }}
                 >
                   <AntDesign
-                    name="home"
+                    name="setting"
                     size={focused ? 32 : 24}
                     color={focused ? "red" : "blue"}
                   />
-                  <Text style={{ color: "black" }}>HOME</Text>
+                  <Text style={{ color: "black" }}>Ayarlar</Text>
                 </View>
               );
             },
           }}
-        /> 
+        />
       </Tab.Navigator>
-    </NavigationContainer>*/
+    </NavigationContainer>
+  );
 }
 
 const styles = StyleSheet.create({});

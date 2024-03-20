@@ -22,7 +22,7 @@ export default function Login() {
           }}
         >
           <Image
-            source={require("../img/OIG13.png")}
+            source={require("../img/Borsa.png")}
             style={{ width: 300, height: 300 }}
           />
         </View>
@@ -70,6 +70,26 @@ export default function Login() {
               backgroundColor: "rgba(9,28,51,1)",
             }}
           />
+          <View
+            style={{
+              width: "70%",
+            }}
+          >
+            <Pressable
+              onPress={() => {
+                navigate;
+              }}
+            >
+              <Text
+                style={{
+                  textAlign: "right",
+                  color: "blue",
+                }}
+              >
+                zaten bir heabınız varmı ?
+              </Text>
+            </Pressable>
+          </View>
         </View>
 
         <View
