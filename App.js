@@ -9,7 +9,12 @@ const Tab = createBottomTabNavigator();
 
 export default function App() {
   return (
-    <NavigationContainer>
+    <View style={{ flex: 1 }}>
+      <Login />
+    </View>
+  );
+
+  /*<NavigationContainer>
       <Tab.Navigator
         screenOptions={{
           tabBarShowLabel: false,
@@ -26,7 +31,7 @@ export default function App() {
           },
         }}
       >
-        <Tab.Screen
+         <Tab.Screen
           name="Login"
           component={Login}
           options={{
@@ -50,10 +55,104 @@ export default function App() {
             },
           }}
         />
-        <Tab.Screen name="Register" component={Register} />
+        <Tab.Screen
+          name="Register"
+          component={Register}
+          options={{
+            tabBarIcon: ({ focused }) => {
+              return (
+                <View
+                  style={{
+                    alignItems: "center",
+                    justifyContent: "center",
+                    position: "absolute",
+                  }}
+                >
+                  <AntDesign
+                    name="home"
+                    size={focused ? 32 : 24}
+                    color={focused ? "red" : "blue"}
+                  />
+                  <Text style={{ color: "black" }}>HOME</Text>
+                </View>
+              );
+            },
+          }}
+        />
+         <Tab.Screen
+          name="Register"
+          component={Register}
+          options={{
+            tabBarIcon: ({ focused }) => {
+              return (
+                <View
+                  style={{
+                    alignItems: "center",
+                    justifyContent: "center",
+                    position: "absolute",
+                  }}
+                >
+                  <AntDesign
+                    name="home"
+                    size={focused ? 32 : 24}
+                    color={focused ? "red" : "blue"}
+                  />
+                  <Text style={{ color: "black" }}>HOME</Text>
+                </View>
+              );
+            },
+          }}
+        />
+        <Tab.Screen
+          name="Register"
+          component={Register}
+          options={{
+            tabBarIcon: ({ focused }) => {
+              return (
+                <View
+                  style={{
+                    alignItems: "center",
+                    justifyContent: "center",
+                    position: "absolute",
+                  }}
+                >
+                  <AntDesign
+                    name="home"
+                    size={focused ? 32 : 24}
+                    color={focused ? "red" : "blue"}
+                  />
+                  <Text style={{ color: "black" }}>HOME</Text>
+                </View>
+              );
+            },
+          }}
+        />
+        <Tab.Screen
+          name="Register"
+          component={Register}
+          options={{
+            tabBarIcon: ({ focused }) => {
+              return (
+                <View
+                  style={{
+                    alignItems: "center",
+                    justifyContent: "center",
+                    position: "absolute",
+                  }}
+                >
+                  <AntDesign
+                    name="home"
+                    size={focused ? 32 : 24}
+                    color={focused ? "red" : "blue"}
+                  />
+                  <Text style={{ color: "black" }}>HOME</Text>
+                </View>
+              );
+            },
+          }}
+        /> 
       </Tab.Navigator>
-    </NavigationContainer>
-  );
+    </NavigationContainer>*/
 }
 
 const styles = StyleSheet.create({});

@@ -18,6 +18,8 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-native": "0.73.5",
+    "react-native-hr": "^1.1.4",
+    "react-native-hr-plus": "^1.0.6",
     "react-native-safe-area-context": "4.8.2",
     "react-native-screens": "~3.29.0",
     "react-native-web": "~0.19.6"
