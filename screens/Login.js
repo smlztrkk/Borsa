@@ -3,14 +3,38 @@ import {
   Text,
   View,
   TextInput,
-  Pressable,
   Image,
-  ScrollView,
+  ActivityIndicator,
+  ScrollView, //ToastAndroid,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Hr from "react-native-hr-plus";
-export default function Login() {
+import { TouchableOpacity } from "react-native-gesture-handler";
+export default function Login({ navigation }) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  // const showtoast = () => {
+  //   ToastAndroid.show("başarılı", ToastAndroid.LONG);
+  // };
+  if (isLoading) {
+    return (
+      <SafeAreaView
+        style={{
+          flex: 1,
+          gap: 20,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "rgba(15,10,40,1)",
+        }}
+      >
+        <ActivityIndicator size={"large"} color={"rgba(255,255,255,1)"} />
+        <Text style={{ color: "rgba(255,255,255,1)" }}>Yükleniyor...</Text>
+      </SafeAreaView>
+    );
+  }
   return (
     <SafeAreaView style={styles.mainview}>
       <ScrollView>
@@ -22,8 +46,11 @@ export default function Login() {
           }}
         >
           <Image
-            source={require("../img/Borsa.png")}
-            style={{ width: 300, height: 300 }}
+            source={require("../img/Borsa1.png")}
+            style={{
+              width: 250,
+              height: 250,
+            }}
           />
         </View>
         <View
@@ -48,26 +75,38 @@ export default function Login() {
         >
           <TextInput
             placeholder="Email"
+            value={email}
+            onChangeText={(text) => {
+              setEmail(text);
+            }}
             placeholderTextColor={"rgba(148,147,152,1)"}
             style={{
               width: "70%",
-              padding: 20,
+              maxWidth: 550,
+
+              padding: 15,
               margin: 10,
               borderRadius: 20,
               color: "white",
-              backgroundColor: "rgba(9,28,51,1)",
+              backgroundColor: "rgba(15,10,70,1)",
             }}
           />
           <TextInput
             placeholder="Şifre"
+            value={password}
+            onChangeText={(text) => {
+              setPassword(text);
+            }}
+            secureTextEntry
             placeholderTextColor={"rgba(148,147,152,1)"}
             style={{
               width: "70%",
+              maxWidth: 550,
               margin: 10,
-              padding: 20,
+              padding: 15,
               borderRadius: 20,
               color: "white",
-              backgroundColor: "rgba(9,28,51,1)",
+              backgroundColor: "rgba(15,10,70,1)",
             }}
           />
           <View
@@ -75,20 +114,20 @@ export default function Login() {
               width: "70%",
             }}
           >
-            <Pressable
+            <TouchableOpacity
               onPress={() => {
-                navigate;
+                navigation.push("ForgotPassword");
               }}
             >
               <Text
                 style={{
                   textAlign: "right",
-                  color: "blue",
+                  color: "rgba(50,100,200,1)",
                 }}
               >
-                zaten bir heabınız varmı ?
+                Şifrenizi mi unuttunuz?
               </Text>
-            </Pressable>
+            </TouchableOpacity>
           </View>
         </View>
 
@@ -97,50 +136,77 @@ export default function Login() {
             flex: 10,
             justifyContent: "center",
             alignItems: "center",
-            marginTop: 20,
+            marginTop: 10,
           }}
         >
-          <View style={{ width: "70%" }}>
-            <Pressable
+          <View
+            style={{
+              width: "70%",
+            }}
+          >
+            <TouchableOpacity
               style={{
                 width: "100%",
+                maxWidth: 550,
                 height: 50,
                 borderRadius: 20,
                 padding: 10,
                 justifyContent: "center",
                 alignItems: "center",
-                backgroundColor: "rgba(31,67,255,1)",
+                backgroundColor: "rgba(31,67,200,1)",
               }}
             >
               <Text style={{ fontSize: 20, fontWeight: 500, color: "white" }}>
                 Giriş
               </Text>
-            </Pressable>
+            </TouchableOpacity>
           </View>
-          <View style={{ width: "70%" }}>
-            <Hr color="white" width={1}>
-              <Text style={{ color: "rgba(148,147,152,1)", margin: 15 }}>
-                VEYA
+          <View
+            style={{
+              width: "70%",
+              maxWidth: 550,
+
+              marginTop: 20,
+            }}
+          >
+            <TouchableOpacity
+              onPress={() => {
+                navigation.push("Register");
+              }}
+            >
+              <Text
+                style={{
+                  textAlign: "left",
+                  color: "rgba(50,100,200,1)",
+                }}
+              >
+                Bir hesabınız yokmu ? Kayıt Ol
               </Text>
+            </TouchableOpacity>
+          </View>
+          <View style={{ width: "70%", maxWidth: 550, marginVertical: 10 }}>
+            <Hr color="rgba(148,147,152,1)" width={2}>
+              <Text style={{ color: "white", margin: 15 }}>VEYA</Text>
             </Hr>
           </View>
-          <View style={{ flexDirection: "row", gap: 10 }}>
-            <Pressable
+          <View style={{ width: "70%", maxWidth: 550 }}>
+            <TouchableOpacity
               style={{
-                width: "34%",
                 height: 50,
                 borderRadius: 20,
                 padding: 10,
                 justifyContent: "center",
                 alignItems: "center",
-                backgroundColor: "rgba(9,28,51,1)",
+                backgroundColor: "rgba(15,10,70,1)",
               }}
             >
               <Image
                 source={require("../img/Google.png")}
                 style={{ width: 25, height: 25 }}
               />
-            </Pressable>
+            </TouchableOpacity>
+
+            {/* //todo:facebook bağlantısı eklenirse kullanılabilir
             <Pressable
               style={{
                 padding: 10,
@@ -149,14 +215,14 @@ export default function Login() {
                 height: 50,
                 justifyContent: "center",
                 alignItems: "center",
-                backgroundColor: "rgba(9,28,51,1)",
+                backgroundColor: "rgba(15,10,70,1)",
               }}
             >
               <Image
                 source={require("../img/Facebook.png")}
                 style={{ width: 35, height: 35 }}
               />
-            </Pressable>
+            </Pressable> */}
           </View>
         </View>
       </ScrollView>
@@ -168,6 +234,6 @@ const styles = StyleSheet.create({
   mainview: {
     flex: 1,
     paddingVertical: 10,
-    backgroundColor: "rgba(12,37,65,1)",
+    backgroundColor: "rgba(15,10,40,1)",
   },
 });

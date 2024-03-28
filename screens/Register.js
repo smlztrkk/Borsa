@@ -3,14 +3,41 @@ import {
   Text,
   View,
   TextInput,
-  Pressable,
   Image,
   ScrollView,
+  ActivityIndicator,
+  //ToastAndroid,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Hr from "react-native-hr-plus";
-export default function Register() {
+import { TouchableOpacity } from "react-native-gesture-handler";
+
+export default function Register({ navigation }) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  // const showtoast = () => {
+  //   ToastAndroid.show("başarılı", ToastAndroid.LONG);
+  // };
+
+  if (isLoading) {
+    return (
+      <SafeAreaView
+        style={{
+          flex: 1,
+          gap: 20,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "rgba(15,10,40,1)",
+        }}
+      >
+        <ActivityIndicator size={"large"} color={"rgba(255,255,255,0.8)"} />
+        <Text style={{ color: "rgba(255,255,255,0.5)" }}>Yükleniyor...</Text>
+      </SafeAreaView>
+    );
+  }
+
   return (
     <SafeAreaView style={styles.mainview}>
       <ScrollView>
@@ -22,8 +49,8 @@ export default function Register() {
           }}
         >
           <Image
-            source={require("../img/Borsa.png")}
-            style={{ width: 300, height: 300 }}
+            source={require("../img/Borsa3.png")}
+            style={{ width: 250, height: 250 }}
           />
         </View>
         <View
@@ -48,26 +75,35 @@ export default function Register() {
         >
           <TextInput
             placeholder="Email"
+            value={email}
+            onChangeText={(text) => {
+              setEmail(text);
+            }}
             placeholderTextColor={"rgba(148,147,152,1)"}
             style={{
               width: "70%",
-              padding: 20,
+              padding: 15,
               margin: 10,
               borderRadius: 20,
               color: "white",
-              backgroundColor: "rgba(9,28,51,1)",
+              backgroundColor: "rgba(15,10,70,1)",
             }}
           />
           <TextInput
             placeholder="Şifre"
+            secureTextEntry
+            value={password}
+            onChangeText={(text) => {
+              setPassword(text);
+            }}
             placeholderTextColor={"rgba(148,147,152,1)"}
             style={{
               width: "70%",
               margin: 10,
-              padding: 20,
+              padding: 15,
               borderRadius: 20,
               color: "white",
-              backgroundColor: "rgba(9,28,51,1)",
+              backgroundColor: "rgba(15,10,70,1)",
             }}
           />
         </View>
@@ -81,7 +117,7 @@ export default function Register() {
           }}
         >
           <View style={{ width: "70%" }}>
-            <Pressable
+            <TouchableOpacity
               style={{
                 width: "100%",
                 height: 50,
@@ -89,15 +125,35 @@ export default function Register() {
                 padding: 10,
                 justifyContent: "center",
                 alignItems: "center",
-                backgroundColor: "rgba(31,67,255,1)",
+                backgroundColor: "rgba(31,67,200,1)",
               }}
             >
               <Text style={{ fontSize: 20, fontWeight: 500, color: "white" }}>
                 Kayıt
               </Text>
-            </Pressable>
+            </TouchableOpacity>
           </View>
-          <View style={{ width: "70%" }}>
+          <View
+            style={{
+              width: "70%",
+              marginTop: 20,
+            }}
+          >
+            <TouchableOpacity
+              onPress={() => {
+                navigation.push("Login");
+              }}
+            >
+              <Text
+                style={{
+                  color: "rgba(50,100,200,1)",
+                }}
+              >
+                Bir heabınız varmı ? Giriş Yap
+              </Text>
+            </TouchableOpacity>
+          </View>
+          <View style={{ width: "70%", marginVertical: 10 }}>
             <Hr color="white" width={1}>
               <Text style={{ color: "rgba(148,147,152,1)", margin: 15 }}>
                 VEYA
@@ -105,7 +161,7 @@ export default function Register() {
             </Hr>
           </View>
           <View style={{ flexDirection: "row", gap: 10 }}>
-            <Pressable
+            <TouchableOpacity
               style={{
                 width: "34%",
                 height: 50,
@@ -113,15 +169,15 @@ export default function Register() {
                 padding: 10,
                 justifyContent: "center",
                 alignItems: "center",
-                backgroundColor: "rgba(9,28,51,1)",
+                backgroundColor: "rgba(15,10,70,1)",
               }}
             >
               <Image
                 source={require("../img/Google.png")}
                 style={{ width: 25, height: 25 }}
               />
-            </Pressable>
-            <Pressable
+            </TouchableOpacity>
+            <TouchableOpacity
               style={{
                 padding: 10,
                 borderRadius: 20,
@@ -129,14 +185,14 @@ export default function Register() {
                 height: 50,
                 justifyContent: "center",
                 alignItems: "center",
-                backgroundColor: "rgba(9,28,51,1)",
+                backgroundColor: "rgba(15,10,70,1)",
               }}
             >
               <Image
                 source={require("../img/Facebook.png")}
                 style={{ width: 35, height: 35 }}
               />
-            </Pressable>
+            </TouchableOpacity>
           </View>
         </View>
       </ScrollView>
@@ -148,6 +204,6 @@ const styles = StyleSheet.create({
   mainview: {
     flex: 1,
     paddingVertical: 10,
-    backgroundColor: "rgba(12,37,65,1)",
+    backgroundColor: "rgba(15,10,40,1)",
   },
 });
