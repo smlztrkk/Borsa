@@ -6,21 +6,53 @@ import {
   Image,
   ScrollView,
   ToastAndroid,
+  ActivityIndicator,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { auth } from "../Firebase";
 
 export default function ForgotPassword({ navigation }) {
   const [email, setEmail] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  if (isLoading) {
+    return (
+      <SafeAreaView
+        style={{
+          flex: 1,
+          gap: 20,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "rgba(15,10,40,1)",
+        }}
+      >
+        <ActivityIndicator size={"large"} color={"rgba(255,255,255,0.8)"} />
+        <Text style={{ color: "rgba(255,255,255,0.5)" }}>
+          Eposta Gönderiliyor...
+        </Text>
+      </SafeAreaView>
+    );
+  }
   const showtoast = () => {
     ToastAndroid.show(
       "Sıfırlama epostası başarılı bir şekilde gönderildi",
       ToastAndroid.LONG
     );
   };
-
+  const ResetPassword = async () => {
+    setIsLoading(true);
+    try {
+      await auth.sendPasswordResetEmail(email).then(() => {
+        setIsLoading(false);
+        navigation.push("Login");
+      });
+    } catch (error) {
+      alert(error.message);
+    }
+  };
   return (
     <SafeAreaView style={styles.mainview}>
       <ScrollView>
@@ -98,6 +130,7 @@ export default function ForgotPassword({ navigation }) {
         >
           <View style={{ width: "70%" }}>
             <TouchableOpacity
+              onPress={ResetPassword}
               style={{
                 width: "100%",
                 height: 50,

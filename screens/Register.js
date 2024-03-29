@@ -178,10 +178,9 @@ export default function Register({ navigation }) {
               </Text>
             </Hr>
           </View>
-          <View style={{ flexDirection: "row", gap: 10 }}>
+          <View style={{ width: "70%", maxWidth: 550 }}>
             <TouchableOpacity
               style={{
-                width: "34%",
                 height: 50,
                 borderRadius: 20,
                 padding: 10,
@@ -195,7 +194,7 @@ export default function Register({ navigation }) {
                 style={{ width: 25, height: 25 }}
               />
             </TouchableOpacity>
-            <TouchableOpacity
+            {/* <TouchableOpacity
               style={{
                 padding: 10,
                 borderRadius: 20,
@@ -210,7 +209,7 @@ export default function Register({ navigation }) {
                 source={require("../img/Facebook.png")}
                 style={{ width: 35, height: 35 }}
               />
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
         </View>
       </ScrollView>

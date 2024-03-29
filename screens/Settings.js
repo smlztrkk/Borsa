@@ -40,22 +40,6 @@ export default function Settings({ navigation }) {
             Çıkış Yap
           </Text>
         </Pressable>
-        <Pressable
-          //onPress={showtoast}
-          style={{
-            width: "100%",
-            height: 50,
-            borderRadius: 20,
-            padding: 10,
-            justifyContent: "center",
-            alignItems: "center",
-            backgroundColor: "rgba(31,67,200,1)",
-          }}
-        >
-          <Text style={{ fontSize: 20, fontWeight: 500, color: "white" }}>
-            Çıkış Yap
-          </Text>
-        </Pressable>
       </View>
     </SafeAreaView>
   );
