@@ -11,6 +11,7 @@ import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Hr from "react-native-hr-plus";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { auth } from "../Firebase";
 export default function Login({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -31,10 +32,25 @@ export default function Login({ navigation }) {
         }}
       >
         <ActivityIndicator size={"large"} color={"rgba(255,255,255,1)"} />
-        <Text style={{ color: "rgba(255,255,255,1)" }}>Yükleniyor...</Text>
+        <Text style={{ color: "rgba(255,255,255,1)" }}>Giriş Yapılıyor...</Text>
       </SafeAreaView>
     );
   }
+  const SingIn = async () => {
+    setIsLoading(true);
+    try {
+      await auth
+        .signInWithEmailAndPassword(email, password)
+        .then((userCredentials) => {
+          const user = userCredentials.user;
+          setIsLoading(false);
+          navigation.push("MainScreen");
+        });
+    } catch (error) {
+      setIsLoading(false);
+      alert(error.message);
+    }
+  };
   return (
     <SafeAreaView style={styles.mainview}>
       <ScrollView>
@@ -145,6 +161,7 @@ export default function Login({ navigation }) {
             }}
           >
             <TouchableOpacity
+              onPress={SingIn}
               style={{
                 width: "100%",
                 maxWidth: 550,

@@ -12,11 +12,12 @@ import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Hr from "react-native-hr-plus";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { auth } from "../Firebase";
 
 export default function Register({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   // const showtoast = () => {
   //   ToastAndroid.show("başarılı", ToastAndroid.LONG);
   // };
@@ -33,11 +34,27 @@ export default function Register({ navigation }) {
         }}
       >
         <ActivityIndicator size={"large"} color={"rgba(255,255,255,0.8)"} />
-        <Text style={{ color: "rgba(255,255,255,0.5)" }}>Yükleniyor...</Text>
+        <Text style={{ color: "rgba(255,255,255,0.5)" }}>
+          Kayıt Olunuyor...
+        </Text>
       </SafeAreaView>
     );
   }
-
+  const SingUp = async () => {
+    setIsLoading(true);
+    try {
+      await auth
+        .createUserWithEmailAndPassword(email, password)
+        .then((userCredentials) => {
+          const user = userCredentials.user;
+          setIsLoading(false);
+          navigation.push("Login");
+        });
+    } catch (error) {
+      setIsLoading(false);
+      alert(error.message);
+    }
+  };
   return (
     <SafeAreaView style={styles.mainview}>
       <ScrollView>
@@ -118,6 +135,7 @@ export default function Register({ navigation }) {
         >
           <View style={{ width: "70%" }}>
             <TouchableOpacity
+              onPress={SingUp}
               style={{
                 width: "100%",
                 height: 50,
