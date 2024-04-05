@@ -1,30 +1,54 @@
 import {
-  Pressable,
   StyleSheet,
   Text, //ToastAndroid,
   View,
+  ActivityIndicator,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { auth } from "../Firebase";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 export default function Settings({ navigation }) {
   // const showtoast = () => {
   //   ToastAndroid.show("başarılı", ToastAndroid.LONG);
   // };
-  const SingOut = () => {
-    auth
-      .signOut()
-      .then(() => {
+  const [isLoading, setIsLoading] = useState(false);
+
+  if (isLoading) {
+    return (
+      <SafeAreaView
+        style={{
+          flex: 1,
+          gap: 20,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "rgba(15,10,40,1)",
+        }}
+      >
+        <ActivityIndicator size={"large"} color={"rgba(255,255,255,0.8)"} />
+        <Text style={{ color: "rgba(255,255,255,0.5)" }}>
+          Çıkış Yapılıyor...
+        </Text>
+      </SafeAreaView>
+    );
+  }
+  const SingOut = async () => {
+    setIsLoading(true);
+    try {
+      await auth.signOut().then(() => {
+        setIsLoading(false);
         navigation.push("Login");
-      })
-      .catch((error) => alert(error.message));
+      });
+    } catch (error) {
+      alert(error.message);
+    }
   };
 
   return (
     <SafeAreaView>
       <View style={{ width: "70%" }}>
-        <Pressable
+        <TouchableOpacity
           onPress={SingOut}
           style={{
             width: "100%",
@@ -39,7 +63,7 @@ export default function Settings({ navigation }) {
           <Text style={{ fontSize: 20, fontWeight: 500, color: "white" }}>
             Çıkış Yap
           </Text>
-        </Pressable>
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
