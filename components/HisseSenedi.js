@@ -17,18 +17,22 @@ export default function HisseSenedi({ item }) {
       <View style={{ width: "50%" }}>
         <Text
           style={{
-            color: "rgb(236, 239, 241)",
-            fontSize: 18,
+            color: "rgb(239, 108, 0)",
+            fontSize: 24,
             fontWeight: 700,
-            marginBottom: 10,
+            marginBottom: 5,
+          }}
+        >
+          {item.code}
+        </Text>
+        <Text
+          style={{
+            color: "rgb(144, 164, 174)",
+            fontSize: 16,
+            fontWeight: 700,
           }}
         >
           {item.text}
-        </Text>
-        <Text
-          style={{ color: "rgb(255, 87, 34)", fontSize: 16, fontWeight: 300 }}
-        >
-          {item.code}
         </Text>
         <Text
           style={{ color: "rgb(255, 64, 129)", fontSize: 16, fontWeight: 300 }}

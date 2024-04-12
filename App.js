@@ -23,13 +23,15 @@ function MainScreen() {
         tabBarShowLabel: false,
         headerShown: false,
         tabBarStyle: {
+          backgroundColor: "rgb(10, 35, 75)",
           position: "absolute",
           borderRadius: 20,
+          borderColor: "rgb(10, 35, 75)",
           height: 60,
-          elevation: 10,
+          elevation: 5,
           left: 20,
           right: 20,
-          bottom: 25,
+          bottom: 20,
         },
       }}
     >
@@ -52,9 +54,16 @@ function MainScreen() {
                 <AntDesign
                   name="home"
                   size={focused ? 32 : 24}
-                  color={focused ? "red" : "blue"}
+                  color={focused ? "aqua" : "rgb(29, 87, 159)"}
                 />
-                <Text style={{ color: "black" }}>ana</Text>
+                {/* <Text
+                  style={{
+                    color: focused ? "aqua" : "gray",
+                    fontSize: focused ? 16 : 10,
+                  }}
+                >
+                  ana
+                </Text> */}
               </View>
             );
           },
@@ -76,9 +85,8 @@ function MainScreen() {
                 <AntDesign
                   name="search1"
                   size={focused ? 32 : 24}
-                  color={focused ? "red" : "blue"}
+                  color={focused ? "aqua" : "rgb(29, 87, 159)"}
                 />
-                <Text style={{ color: "black" }}>Arama</Text>
               </View>
             );
           },
@@ -100,10 +108,8 @@ function MainScreen() {
                 <FontAwesome5
                   name="exchange-alt"
                   size={focused ? 32 : 24}
-                  color={focused ? "red" : "blue"}
+                  color={focused ? "aqua" : "rgb(29, 87, 159)"}
                 />
-
-                <Text style={{ color: "black" }}>Al Sat</Text>
               </View>
             );
           },
@@ -125,9 +131,8 @@ function MainScreen() {
                 <AntDesign
                   name="wallet"
                   size={focused ? 32 : 24}
-                  color={focused ? "red" : "blue"}
+                  color={focused ? "aqua" : "rgb(29, 87, 159)"}
                 />
-                <Text style={{ color: "black" }}>Portfolio</Text>
               </View>
             );
           },
@@ -149,9 +154,8 @@ function MainScreen() {
                 <AntDesign
                   name="setting"
                   size={focused ? 32 : 24}
-                  color={focused ? "red" : "blue"}
+                  color={focused ? "aqua" : "rgb(29, 87, 159)"}
                 />
-                <Text style={{ color: "black" }}>Ayarlar</Text>
               </View>
             );
           },
@@ -166,7 +170,7 @@ export default function App() {
     <RootSiblingParent>
       <NavigationContainer>
         <Stack.Navigator
-          initialRouteName="Login"
+          initialRouteName="MainScreen"
           screenOptions={{ headerShown: false }}
         >
           <Stack.Screen name="MainScreen" component={MainScreen} />

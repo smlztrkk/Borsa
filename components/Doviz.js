@@ -10,7 +10,7 @@ export default function Doviz({ item, financeData }) {
         backgroundColor: "rgb(29,47,69)",
         borderRadius: 35,
         padding: 10,
-        width: "50%",
+        width: "90%",
         justifyContent: "center",
         alignItems: "center",
       }}

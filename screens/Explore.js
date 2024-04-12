@@ -1,4 +1,10 @@
-import { FlatList, StyleSheet, Text, View } from "react-native";
+import {
+  FlatList,
+  StyleSheet,
+  Text,
+  View,
+  ActivityIndicator,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { TouchableOpacity } from "react-native-gesture-handler";
@@ -7,10 +13,12 @@ import Doviz from "../components/Doviz";
 import HisseSenedi from "../components/HisseSenedi";
 export default function Explore() {
   const [button, setButton] = useState(true);
-
+  const [isLoading, setIsLoading] = useState(false);
   const [financeData, setFinanceData] = useState({});
 
   useEffect(() => {
+    setIsLoading(true);
+
     const fetchData = async () => {
       try {
         const response = await axios.get(
@@ -18,40 +26,46 @@ export default function Explore() {
         );
         setFinanceData(response.data);
         //console.log(response.data);
+        setIsLoading(false);
       } catch (error) {
         alert("Bir hata oluştu:", error);
       }
     };
 
     fetchData();
-  }, [button]); // useEffect'in sadece bir kere çalışması için boş bir bağımlılık dizisi kullanılıyor
+  }, []); // useEffect'in sadece bir kere çalışması için boş bir bağımlılık dizisi kullanılıyor
 
   const [responseData, setResponseData] = useState(null);
   const hissesenedi = "https://api.collectapi.com/economy/hisseSenedi";
   const döviz =
     "https://api.collectapi.com/economy/currencyToAll?int=1&base=TRY";
+
+  const Api = "apikey 18bbvt4R0ZNSfXt6QNVbRt:6EL2kgzugiD4sy9XkE6rGc";
+  //const Api1 = "apikey 1KvoXE5NLfHkuNKbgMXmLR:6m5jUXdBXRnqSwnXxi4ycO";
+  const Api2 = "apikey 3QFnPhlvL0Bc7W7c8imeDa:4X52g11L50nHGDA4jX1TZM";
   useEffect(() => {
+    setIsLoading(true);
+
     const fetchData = async () => {
       try {
         const response = await axios.get(hissesenedi, {
           headers: {
             "Content-Type": "application/json",
-            Authorization:
-              "apikey 1KvoXE5NLfHkuNKbgMXmLR:6m5jUXdBXRnqSwnXxi4ycO",
+            Authorization: `${Api2}`,
           },
         });
         setResponseData(response.data.result);
-        console.log(response.data.result);
+        setIsLoading(false);
+
+        //console.log(response.data.result);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
 
     fetchData();
-
-    // cleanup function to cancel any ongoing requests if the component unmounts
-    return () => {};
-  }, []); // empty dependency array to only run the effect on mount
+  }, []);
+  const [numColumns, setNumColumns] = useState(1);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "rgb(12, 37, 65)" }}>
@@ -124,13 +138,34 @@ export default function Explore() {
         </View>
       </View>
 
-      {financeData || responseData ? (
+      {!isLoading ? (
+        //* financeData || responseData  ?  */
         button ? (
           <FlatList
             data={Object.keys(financeData)}
             keyExtractor={(item, index) => index.toString()} // keyExtractor düzeltildi
+            numColumns={numColumns}
             renderItem={({ item, index }) => {
-              if (index !== 0) {
+              // if (index == 0) {
+              //   return (
+              //     <View
+              //       style={{
+              //         flex: 1,
+              //         justifyContent: "center",
+              //         alignItems: "center",
+              //         width: "100%",
+              //         height: 100,
+              //         marginVertical: 10,
+              //       }}
+              //     >
+              //       <Text style={{ color: "white" }}>Güncellenme Tarihi</Text>
+              //       <Text style={{ color: "white" }}>
+              //         {financeData.Update_Date}
+              //       </Text>
+              //     </View>
+              //   );
+              // }
+              if (index !== 0 || financeData[item]["Tür"] == "Altın") {
                 return (
                   <View
                     style={{
@@ -139,7 +174,7 @@ export default function Explore() {
                       alignItems: "center",
                       width: "100%",
                       height: 180,
-                      margin: 10,
+                      marginVertical: 10,
                     }}
                   >
                     <Doviz item={item} financeData={financeData} />
@@ -152,28 +187,40 @@ export default function Explore() {
           <FlatList
             data={responseData}
             keyExtractor={(item, index) => index.toString()} // keyExtractor düzeltildi
+            numColumns={numColumns}
             renderItem={({ item, index }) => {
-              if (index !== 0) {
-                return (
-                  <View
-                    style={{
-                      flex: 1,
-                      justifyContent: "center",
-                      alignItems: "center",
-                      width: "100%",
-                      height: 180,
-                      margin: 10,
-                    }}
-                  >
-                    <HisseSenedi item={item} />
-                  </View>
-                );
-              }
+              return (
+                <View
+                  style={{
+                    flex: 1,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    width: "100%",
+                    height: 180,
+                    marginVertical: 10,
+                  }}
+                >
+                  <HisseSenedi item={item} />
+                </View>
+              );
             }}
           />
         )
       ) : (
-        <Text style={{ color: "white" }}>Veriler yükleniyor...</Text> // Veriler henüz yüklenmediyse
+        <SafeAreaView
+          style={{
+            flex: 1,
+            gap: 20,
+            justifyContent: "center",
+            alignItems: "center",
+            backgroundColor: "rgb(12, 37, 65)",
+          }}
+        >
+          <ActivityIndicator size={"large"} color={"rgba(255,255,255,1)"} />
+          <Text style={{ color: "rgba(255,255,255,1)" }}>
+            Veriler Yükleniyor...
+          </Text>
+        </SafeAreaView>
       )}
     </SafeAreaView>
   );

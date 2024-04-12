@@ -46,24 +46,50 @@ export default function Settings({ navigation }) {
   };
 
   return (
-    <SafeAreaView>
-      <View style={{ width: "70%" }}>
-        <TouchableOpacity
-          onPress={SingOut}
-          style={{
-            width: "100%",
-            height: 50,
-            borderRadius: 20,
-            padding: 10,
-            justifyContent: "center",
-            alignItems: "center",
-            backgroundColor: "rgba(31,67,200,1)",
-          }}
-        >
-          <Text style={{ fontSize: 20, fontWeight: 500, color: "white" }}>
-            Çıkış Yap
-          </Text>
-        </TouchableOpacity>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "rgb(12, 37, 65)" }}>
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <View style={{ width: "70%" }}>
+          <TouchableOpacity
+            onPress={SingOut}
+            style={{
+              width: "100%",
+              height: 50,
+              borderRadius: 20,
+              padding: 10,
+              justifyContent: "center",
+              alignItems: "center",
+              backgroundColor: "rgba(31,67,200,1)",
+            }}
+          >
+            <Text style={{ fontSize: 20, fontWeight: 500, color: "white" }}>
+              Çıkış Yap
+            </Text>
+          </TouchableOpacity>
+        </View>
+        <View style={{ width: "70%" }}>
+          <TouchableOpacity
+            onPress={() => navigation.push("ForgotPassword")}
+            style={{
+              width: "100%",
+              height: 50,
+              borderRadius: 20,
+              padding: 10,
+              justifyContent: "center",
+              alignItems: "center",
+              backgroundColor: "rgba(31,67,200,1)",
+            }}
+          >
+            <Text style={{ fontSize: 20, fontWeight: 500, color: "white" }}>
+              Şifre değiştir
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </SafeAreaView>
   );
