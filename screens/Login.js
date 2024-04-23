@@ -28,7 +28,7 @@ export default function Login({ navigation }) {
           gap: 20,
           justifyContent: "center",
           alignItems: "center",
-          backgroundColor: "rgba(15,10,40,1)",
+          backgroundColor: "rgba(11,20,27,1)",
         }}
       >
         <ActivityIndicator size={"large"} color={"rgba(255,255,255,1)"} />
@@ -102,9 +102,9 @@ export default function Login({ navigation }) {
 
               padding: 15,
               margin: 10,
-              borderRadius: 20,
+              borderRadius: 15,
               color: "white",
-              backgroundColor: "rgba(15,10,70,1)",
+              backgroundColor: "rgba(27,38,44,1)",
             }}
           />
           <TextInput
@@ -120,9 +120,9 @@ export default function Login({ navigation }) {
               maxWidth: 550,
               margin: 10,
               padding: 15,
-              borderRadius: 20,
+              borderRadius: 15,
               color: "white",
-              backgroundColor: "rgba(15,10,70,1)",
+              backgroundColor: "rgba(27,38,44,1)",
             }}
           />
           <View
@@ -138,7 +138,7 @@ export default function Login({ navigation }) {
               <Text
                 style={{
                   textAlign: "right",
-                  color: "rgba(50,100,200,1)",
+                  color: "rgba(50,100,200,0.7)",
                 }}
               >
                 Şifrenizi mi unuttunuz?
@@ -170,7 +170,7 @@ export default function Login({ navigation }) {
                 padding: 10,
                 justifyContent: "center",
                 alignItems: "center",
-                backgroundColor: "rgba(31,67,200,1)",
+                backgroundColor: "rgba(31,67,200,0.7)",
               }}
             >
               <Text style={{ fontSize: 20, fontWeight: 500, color: "white" }}>
@@ -194,7 +194,7 @@ export default function Login({ navigation }) {
               <Text
                 style={{
                   textAlign: "left",
-                  color: "rgba(50,100,200,1)",
+                  color: "rgba(50,100,200,0.7)",
                 }}
               >
                 Bir hesabınız yokmu ? Kayıt Ol
@@ -214,7 +214,7 @@ export default function Login({ navigation }) {
                 padding: 10,
                 justifyContent: "center",
                 alignItems: "center",
-                backgroundColor: "rgba(15,10,70,1)",
+                backgroundColor: "rgba(27,38,44,1)",
               }}
             >
               <Image
@@ -251,6 +251,6 @@ const styles = StyleSheet.create({
   mainview: {
     flex: 1,
     paddingVertical: 10,
-    backgroundColor: "rgba(15,10,40,1)",
+    backgroundColor: "rgba(11,20,27,1)",
   },
 });

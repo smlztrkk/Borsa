@@ -30,7 +30,7 @@ export default function Register({ navigation }) {
           gap: 20,
           justifyContent: "center",
           alignItems: "center",
-          backgroundColor: "rgba(15,10,40,1)",
+          backgroundColor: "rgba(11,20,27,1)",
         }}
       >
         <ActivityIndicator size={"large"} color={"rgba(255,255,255,0.8)"} />
@@ -103,7 +103,7 @@ export default function Register({ navigation }) {
               margin: 10,
               borderRadius: 20,
               color: "white",
-              backgroundColor: "rgba(15,10,70,1)",
+              backgroundColor: "rgba(27,38,44,1)",
             }}
           />
           <TextInput
@@ -120,7 +120,7 @@ export default function Register({ navigation }) {
               padding: 15,
               borderRadius: 20,
               color: "white",
-              backgroundColor: "rgba(15,10,70,1)",
+              backgroundColor: "rgba(27,38,44,1)",
             }}
           />
         </View>
@@ -143,7 +143,7 @@ export default function Register({ navigation }) {
                 padding: 10,
                 justifyContent: "center",
                 alignItems: "center",
-                backgroundColor: "rgba(31,67,200,1)",
+                backgroundColor: "rgba(31,67,200,0.7)",
               }}
             >
               <Text style={{ fontSize: 20, fontWeight: 500, color: "white" }}>
@@ -164,7 +164,7 @@ export default function Register({ navigation }) {
             >
               <Text
                 style={{
-                  color: "rgba(50,100,200,1)",
+                  color: "rgba(50,100,200,0.7)",
                 }}
               >
                 Bir heabınız varmı ? Giriş Yap
@@ -186,7 +186,7 @@ export default function Register({ navigation }) {
                 padding: 10,
                 justifyContent: "center",
                 alignItems: "center",
-                backgroundColor: "rgba(15,10,70,1)",
+                backgroundColor: "rgba(27,38,44,1)",
               }}
             >
               <Image
@@ -221,6 +221,6 @@ const styles = StyleSheet.create({
   mainview: {
     flex: 1,
     paddingVertical: 10,
-    backgroundColor: "rgba(15,10,40,1)",
+    backgroundColor: "rgba(11,20,27,1)",
   },
 });

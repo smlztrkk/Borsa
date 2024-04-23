@@ -26,7 +26,7 @@ export default function ForgotPassword({ navigation }) {
           gap: 20,
           justifyContent: "center",
           alignItems: "center",
-          backgroundColor: "rgba(15,10,40,1)",
+          backgroundColor: "rgba(11,20,27,1)",
         }}
       >
         <ActivityIndicator size={"large"} color={"rgba(255,255,255,0.8)"} />
@@ -115,7 +115,7 @@ export default function ForgotPassword({ navigation }) {
               margin: 10,
               borderRadius: 20,
               color: "white",
-              backgroundColor: "rgba(15,10,70,1)",
+              backgroundColor: "rgba(27,38,44,1)",
             }}
           />
         </View>
@@ -138,7 +138,7 @@ export default function ForgotPassword({ navigation }) {
                 padding: 10,
                 justifyContent: "center",
                 alignItems: "center",
-                backgroundColor: "rgba(31,67,200,1)",
+                backgroundColor: "rgba(31,67,200,0.7)",
               }}
             >
               <Text style={{ fontSize: 20, fontWeight: 500, color: "white" }}>
@@ -156,6 +156,6 @@ const styles = StyleSheet.create({
   mainview: {
     flex: 1,
     paddingVertical: 10,
-    backgroundColor: "rgba(15,10,40,1)",
+    backgroundColor: "rgba(11,20,27,1)",
   },
 });

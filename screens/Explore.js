@@ -1,16 +1,19 @@
-import {
-  FlatList,
-  StyleSheet,
-  Text,
-  View,
-  ActivityIndicator,
-} from "react-native";
+import { StyleSheet, Text, View, ActivityIndicator } from "react-native";
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import axios from "axios";
 import Doviz from "../components/Doviz";
+import { SimpleLineIcons } from "@expo/vector-icons";
 import HisseSenedi from "../components/HisseSenedi";
+import {
+  collection,
+  getDocs,
+  doc,
+  onSnapshot,
+  updateDoc,
+} from "firebase/firestore";
+import { db } from "../Firebase";
 export default function Explore() {
   const [button, setButton] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
@@ -19,12 +22,13 @@ export default function Explore() {
   useEffect(() => {
     setIsLoading(true);
 
-    const fetchData = async () => {
+    const fetcDhData = async () => {
       try {
         const response = await axios.get(
           "https://finans.truncgil.com/today.json"
         );
         setFinanceData(response.data);
+
         //console.log(response.data);
         setIsLoading(false);
       } catch (error) {
@@ -32,7 +36,7 @@ export default function Explore() {
       }
     };
 
-    fetchData();
+    fetcDhData();
   }, []); // useEffect'in sadece bir kere çalışması için boş bir bağımlılık dizisi kullanılıyor
 
   const [responseData, setResponseData] = useState(null);
@@ -41,23 +45,108 @@ export default function Explore() {
     "https://api.collectapi.com/economy/currencyToAll?int=1&base=TRY";
 
   const Api = "apikey 18bbvt4R0ZNSfXt6QNVbRt:6EL2kgzugiD4sy9XkE6rGc";
-  //const Api1 = "apikey 1KvoXE5NLfHkuNKbgMXmLR:6m5jUXdBXRnqSwnXxi4ycO";
+  const Api1 = "apikey 1KvoXE5NLfHkuNKbgMXmLR:6m5jUXdBXRnqSwnXxi4ycO";
   const Api2 = "apikey 3QFnPhlvL0Bc7W7c8imeDa:4X52g11L50nHGDA4jX1TZM";
-  useEffect(() => {
+  const Emrecan = "apikey 2A0tuHrD0rsii3GZ7zMFkw:3C6K8mpuHg64lzEGdevoGI";
+  const enes = "apikey 1toPpXebPyR3DkcVUY9lr1:1WB9IbzzRXUabANgzycQs0";
+  const fetchHData = async () => {
     setIsLoading(true);
+    try {
+      const response = await axios.get(hissesenedi, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${enes}`,
+        },
+      });
+      setResponseData(response.data.result);
+      setIsLoading(false);
 
+      console.log("hisse başarılı");
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  //todo burası firebase ile ilgili alan
+  const firestoreData = doc(db, "Data", "HisseSenedi");
+  const [gelen, setGelen] = useState({});
+  useEffect(() => {
+    onSnapshot(firestoreData, (doc) => {
+      setGelen(doc.data());
+    });
+  }, []);
+  const DovizUp = async () => {
+    setIsLoading(true);
+    try {
+      const docRef = await updateDoc(doc(db, "Data", "eWser7DqScJIIDd3PYVW"), {
+        response: financeData,
+      });
+      console.log("başarılı döviz ");
+      setIsLoading(false);
+    } catch (e) {
+      console.error("Error adding document: ", e);
+    }
+  };
+  //console.log(responseData);
+  let date = new Date();
+  const HisseUp = async () => {
+    try {
+      if (responseData != null) {
+        const docRef = await updateDoc(
+          doc(db, "Hisse", "31MmtuoaW39Z364cWAcM"),
+          {
+            response: { date },
+            responseData,
+          }
+        );
+        console.log("başarılı hisse");
+      } else {
+        console.log("responseData null");
+      }
+    } catch (e) {
+      console.error("Error adding document: ", e);
+    }
+  };
+  //todo
+  const [fdata, setFdata] = useState([]);
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, "Hisse"));
+        if (querySnapshot && typeof querySnapshot.forEach === "function") {
+          const newData = [];
+          querySnapshot.forEach((doc) => {
+            newData.push(doc.data());
+          });
+
+          // newData[0].responseData'nın varlığını ve doğru bir dizi olduğunu kontrol edin
+          if (newData.length > 0 && Array.isArray(newData[0].responseData)) {
+            setFdata(newData[0].responseData);
+          } else {
+            console.error("responseData geçersiz veya mevcut değil");
+          }
+        } else {
+          console.error("querySnapshot yineleyici ya da tanımsız");
+        }
+      } catch (error) {
+        console.error("Veri alma hatası:", error);
+      }
+    };
+
+    getData();
+  }, [button]); // `button` değişkenine bağlı olarak `useEffect` çalıştırılacak
+
+  const [data, setData] = useState([]);
+  useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(hissesenedi, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `${Api2}`,
-          },
+        const querySnapshot = await getDocs(collection(db, "Hisse"));
+        const fetchedDataaa = [];
+        querySnapshot.forEach((doc) => {
+          fetchedDataaa.push(doc.data());
         });
-        setResponseData(response.data.result);
-        setIsLoading(false);
-
-        //console.log(response.data.result);
+        //console.log(fetchedDataaa[0].response);
+        setData(fetchedDataaa[0].response);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -65,10 +154,14 @@ export default function Explore() {
 
     fetchData();
   }, []);
-  const [numColumns, setNumColumns] = useState(1);
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "rgb(12, 37, 65)" }}>
+    <SafeAreaView
+      style={{
+        flex: 1,
+        backgroundColor: "rgb(11,20,27)",
+      }}
+    >
       <View
         style={{
           width: "100%",
@@ -76,17 +169,20 @@ export default function Explore() {
           flexDirection: "row",
           justifyContent: "center",
           alignItems: "center",
+          position: "absolute",
+          zIndex: 2,
+          top: 40,
         }}
       >
         <View
           style={{
-            width: 300,
+            width: 340,
             height: 40,
             borderRadius: 20,
             flexDirection: "row",
             justifyContent: "space-between",
             alignItems: "center",
-            backgroundColor: "rgb(39, 57, 79)",
+            backgroundColor: "rgb(28,37,44)",
           }}
         >
           <TouchableOpacity
@@ -104,7 +200,7 @@ export default function Explore() {
           >
             <Text
               style={{
-                color: button ? "rgb(39, 57, 79)" : "white",
+                color: button ? "rgb(28,37,44)" : "white",
                 fontSize: 16,
                 fontWeight: 500,
               }}
@@ -112,6 +208,23 @@ export default function Explore() {
               Döviz
             </Text>
           </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              DovizUp();
+              fetchHData();
+              HisseUp();
+            }}
+            style={{
+              width: 40,
+              borderRadius: 20,
+              justifyContent: "center",
+              alignItems: "center",
+              height: 40,
+            }}
+          >
+            <SimpleLineIcons name="refresh" size={24} color="aqua" />
+          </TouchableOpacity>
+
           <TouchableOpacity
             onPress={() => {
               setButton(false);
@@ -127,7 +240,7 @@ export default function Explore() {
           >
             <Text
               style={{
-                color: button ? "white" : "rgb(39, 57, 79)",
+                color: button ? "white" : "rgb(28,37,44)",
                 fontSize: 16,
                 fontWeight: 500,
               }}
@@ -141,70 +254,45 @@ export default function Explore() {
       {!isLoading ? (
         //* financeData || responseData  ?  */
         button ? (
-          <FlatList
-            data={Object.keys(financeData)}
-            keyExtractor={(item, index) => index.toString()} // keyExtractor düzeltildi
-            numColumns={numColumns}
-            renderItem={({ item, index }) => {
-              // if (index == 0) {
-              //   return (
-              //     <View
-              //       style={{
-              //         flex: 1,
-              //         justifyContent: "center",
-              //         alignItems: "center",
-              //         width: "100%",
-              //         height: 100,
-              //         marginVertical: 10,
-              //       }}
-              //     >
-              //       <Text style={{ color: "white" }}>Güncellenme Tarihi</Text>
-              //       <Text style={{ color: "white" }}>
-              //         {financeData.Update_Date}
-              //       </Text>
-              //     </View>
-              //   );
-              // }
-              if (index !== 0 || financeData[item]["Tür"] == "Altın") {
-                return (
-                  <View
-                    style={{
-                      flex: 1,
-                      justifyContent: "center",
-                      alignItems: "center",
-                      width: "100%",
-                      height: 180,
-                      marginVertical: 10,
-                    }}
-                  >
-                    <Doviz item={item} financeData={financeData} />
-                  </View>
-                );
-              }
-            }}
-          />
+          financeData != null ? (
+            <View style={{ paddingBottom: 0 }}>
+              <Doviz financeData={financeData} />
+            </View>
+          ) : (
+            <SafeAreaView
+              style={{
+                flex: 1,
+                gap: 20,
+                justifyContent: "center",
+                alignItems: "center",
+                backgroundColor: "rgb(11,20,27)",
+              }}
+            >
+              <ActivityIndicator size={"large"} color={"rgba(255,255,255,1)"} />
+              <Text style={{ color: "rgba(255,255,255,1)" }}>
+                Veriler Yükleniyor...
+              </Text>
+            </SafeAreaView>
+          )
+        ) : fdata.length > 0 ? (
+          <View>
+            <HisseSenedi fdata={fdata} />
+          </View>
         ) : (
-          <FlatList
-            data={responseData}
-            keyExtractor={(item, index) => index.toString()} // keyExtractor düzeltildi
-            numColumns={numColumns}
-            renderItem={({ item, index }) => {
-              return (
-                <View
-                  style={{
-                    flex: 1,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    width: "100%",
-                    height: 180,
-                    marginVertical: 10,
-                  }}
-                >
-                  <HisseSenedi item={item} />
-                </View>
-              );
+          <SafeAreaView
+            style={{
+              flex: 1,
+              gap: 20,
+              justifyContent: "center",
+              alignItems: "center",
+              backgroundColor: "rgb(11,20,27)",
             }}
-          />
+          >
+            <ActivityIndicator size={"large"} color={"rgba(255,255,255,1)"} />
+            <Text style={{ color: "rgba(255,255,255,1)" }}>
+              Veriler Yükleniyor...
+            </Text>
+          </SafeAreaView>
         )
       ) : (
         <SafeAreaView
@@ -213,7 +301,7 @@ export default function Explore() {
             gap: 20,
             justifyContent: "center",
             alignItems: "center",
-            backgroundColor: "rgb(12, 37, 65)",
+            backgroundColor: "rgb(11,20,27)",
           }}
         >
           <ActivityIndicator size={"large"} color={"rgba(255,255,255,1)"} />

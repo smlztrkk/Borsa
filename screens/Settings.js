@@ -23,7 +23,7 @@ export default function Settings({ navigation }) {
           gap: 20,
           justifyContent: "center",
           alignItems: "center",
-          backgroundColor: "rgba(15,10,40,1)",
+          backgroundColor: "rgb(11,20,27)",
         }}
       >
         <ActivityIndicator size={"large"} color={"rgba(255,255,255,0.8)"} />
@@ -46,7 +46,7 @@ export default function Settings({ navigation }) {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "rgb(12, 37, 65)" }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "rgb(11,20,27)" }}>
       <View
         style={{
           flex: 1,
@@ -64,7 +64,7 @@ export default function Settings({ navigation }) {
               padding: 10,
               justifyContent: "center",
               alignItems: "center",
-              backgroundColor: "rgba(31,67,200,1)",
+              backgroundColor: "rgba(31,67,200,0.7)",
             }}
           >
             <Text style={{ fontSize: 20, fontWeight: 500, color: "white" }}>
@@ -82,7 +82,7 @@ export default function Settings({ navigation }) {
               padding: 10,
               justifyContent: "center",
               alignItems: "center",
-              backgroundColor: "rgba(31,67,200,1)",
+              backgroundColor: "rgba(31,67,200,0.7)",
             }}
           >
             <Text style={{ fontSize: 20, fontWeight: 500, color: "white" }}>

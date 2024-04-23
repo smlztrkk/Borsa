@@ -90,7 +90,7 @@ export default function Trade() {
   ];
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "rgb(12, 37, 65)" }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "rgb(11,20,27)" }}>
       <ScrollView>
         <View
           style={{
@@ -129,12 +129,12 @@ export default function Trade() {
               inputStyles={{ color: "white" }}
               boxStyles={{
                 width: 150,
-                backgroundColor: "rgb(39, 57, 79)",
+                backgroundColor: "rgb(27,38,44)",
                 borderWidth: 0,
               }}
               dropdownStyles={{
                 width: 150,
-                backgroundColor: "rgb(39, 57, 79)",
+                backgroundColor: "rgb(27,38,44)",
                 borderWidth: 0,
               }}
               dropdownItemStyles={{ borderBottomWidth: 1, borderColor: "gray" }}
@@ -158,12 +158,12 @@ export default function Trade() {
               inputStyles={{ color: "white" }}
               boxStyles={{
                 width: 150,
-                backgroundColor: "rgb(39, 57, 79)",
+                backgroundColor: "rgb(27,38,44)",
                 borderWidth: 0,
               }}
               dropdownStyles={{
                 width: 150,
-                backgroundColor: "rgb(39, 57, 79)",
+                backgroundColor: "rgb(27,38,44)",
                 borderWidth: 0,
               }}
               dropdownItemStyles={{ borderBottomWidth: 1, borderColor: "gray" }}
@@ -183,13 +183,14 @@ export default function Trade() {
           <TextInput
             onChangeText={(num) => setMiktar(num)}
             placeholder="Miktar..."
+            placeholderTextColor={"gray"}
             style={{
               paddingStart: 10,
               width: 100,
               height: 40,
               borderRadius: 10,
               color: "white",
-              backgroundColor: "rgb(39, 57, 79)",
+              backgroundColor: "rgb(27,38,44)",
               marginVertical: 50,
             }}
           />
@@ -206,7 +207,7 @@ export default function Trade() {
           >
             <Text
               style={{
-                color: "rgb(39, 57, 79)",
+                color: "rgb(27,38,44)",
                 fontSize: 16,
                 fontWeight: 500,
               }}
@@ -224,7 +225,7 @@ export default function Trade() {
           style={{
             width: "100%",
             borderWidth: 2,
-            borderColor: "rgb(39, 57, 79)",
+            borderColor: "rgb(27,38,44)",
             marginVertical: 60,
           }}
         />
@@ -249,13 +250,14 @@ export default function Trade() {
         >
           <TextInput
             placeholder="Miktar..."
+            placeholderTextColor={"gray"}
             style={{
               paddingStart: 10,
               width: 100,
               height: 40,
               borderRadius: 10,
               color: "white",
-              backgroundColor: "rgb(39, 57, 79)",
+              backgroundColor: "rgb(27,38,44)",
               marginVertical: 50,
               marginBottom: 200,
             }}

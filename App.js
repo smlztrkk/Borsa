@@ -10,7 +10,7 @@ import Portfolio from "./screens/Portfolio";
 import Settings from "./screens/Settings";
 import Search from "./screens/Search";
 import Explore from "./screens/Explore";
-import { AntDesign, FontAwesome5 } from "@expo/vector-icons";
+import { AntDesign, FontAwesome5, MaterialIcons } from "@expo/vector-icons";
 import { RootSiblingParent } from "react-native-root-siblings";
 import ForgotPassword from "./screens/ForgotPassword";
 const Tab = createBottomTabNavigator();
@@ -23,10 +23,11 @@ function MainScreen() {
         tabBarShowLabel: false,
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: "rgb(10, 35, 75)",
+          backgroundColor: "rgb(11,20,27)",
           position: "absolute",
           borderRadius: 20,
-          borderColor: "rgb(10, 35, 75)",
+          borderWidth: 1,
+          borderColor: "rgb(27,38,44)",
           height: 60,
           elevation: 5,
           left: 20,
@@ -105,9 +106,9 @@ function MainScreen() {
                   position: "absolute",
                 }}
               >
-                <FontAwesome5
-                  name="exchange-alt"
-                  size={focused ? 32 : 24}
+                <MaterialIcons
+                  name="compare-arrows"
+                  size={focused ? 42 : 36}
                   color={focused ? "aqua" : "rgb(29, 87, 159)"}
                 />
               </View>
