@@ -18,27 +18,13 @@ export default function Register({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const text = "Kayıt ediliyor...";
   // const showtoast = () => {
   //   ToastAndroid.show("başarılı", ToastAndroid.LONG);
   // };
 
   if (isLoading) {
-    return (
-      <SafeAreaView
-        style={{
-          flex: 1,
-          gap: 20,
-          justifyContent: "center",
-          alignItems: "center",
-          backgroundColor: "rgba(11,20,27,1)",
-        }}
-      >
-        <ActivityIndicator size={"large"} color={"rgba(255,255,255,0.8)"} />
-        <Text style={{ color: "rgba(255,255,255,0.5)" }}>
-          Kayıt Olunuyor...
-        </Text>
-      </SafeAreaView>
-    );
+    return <Loading text={text} />;
   }
   const SingUp = async () => {
     setIsLoading(true);
@@ -66,7 +52,7 @@ export default function Register({ navigation }) {
           }}
         >
           <Image
-            source={require("../img/Borsa3.png")}
+            source={require("../img/Borsa1.png")}
             style={{ width: 250, height: 250 }}
           />
         </View>

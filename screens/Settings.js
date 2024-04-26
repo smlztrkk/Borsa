@@ -8,6 +8,7 @@ import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { auth } from "../Firebase";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import WatchList from "../components/WatchList";
 
 export default function Settings({ navigation }) {
   // const showtoast = () => {
@@ -52,6 +53,7 @@ export default function Settings({ navigation }) {
           flex: 1,
           justifyContent: "center",
           alignItems: "center",
+          gap: 20,
         }}
       >
         <View style={{ width: "70%" }}>
@@ -89,6 +91,17 @@ export default function Settings({ navigation }) {
               Şifre değiştir
             </Text>
           </TouchableOpacity>
+        </View>
+        <View
+          style={{
+            width: 400,
+            height: 500,
+            borderWidth: 2,
+            borderColor: "white",
+            borderRadius: 20,
+          }}
+        >
+          <WatchList />
         </View>
       </View>
     </SafeAreaView>

@@ -12,29 +12,17 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Hr from "react-native-hr-plus";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { auth } from "../Firebase";
+import Loading from "../components/Loading";
 export default function Login({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-
+  const text = "Giriş yapılıyor...";
   // const showtoast = () => {
   //   ToastAndroid.show("başarılı", ToastAndroid.LONG);
   // };
   if (isLoading) {
-    return (
-      <SafeAreaView
-        style={{
-          flex: 1,
-          gap: 20,
-          justifyContent: "center",
-          alignItems: "center",
-          backgroundColor: "rgba(11,20,27,1)",
-        }}
-      >
-        <ActivityIndicator size={"large"} color={"rgba(255,255,255,1)"} />
-        <Text style={{ color: "rgba(255,255,255,1)" }}>Giriş Yapılıyor...</Text>
-      </SafeAreaView>
-    );
+    return <Loading text={text} />;
   }
   const SingIn = async () => {
     setIsLoading(true);
@@ -62,7 +50,7 @@ export default function Login({ navigation }) {
           }}
         >
           <Image
-            source={require("../img/Borsa1.png")}
+            source={require("../img/Borsa3.png")}
             style={{
               width: 250,
               height: 250,
