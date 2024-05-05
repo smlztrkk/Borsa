@@ -124,14 +124,14 @@ export default function Search() {
       // Mevcut döviz verilerini alın
       let existingDoviz = existingData.Döviz || [];
       // Gelen target bilgisinin mevcut döviz verileri ile eşleşmesini kontrol edin
+      console.log(existingDoviz);
       const targetCode = target[0].code;
-      const isExisting = existingDoviz.some(
-        (doviz) => doviz.code === targetCode
-      );
+      console.log(targetCode);
+      const isExisting = existingDoviz.some((doviz) => doviz === targetCode);
 
       if (!isExisting) {
         // Eğer target kodu mevcut döviz verileri arasında yoksa, ekleyin
-        const updatedDoviz = [...existingDoviz, ...target];
+        const updatedDoviz = [...existingDoviz, targetCode];
 
         // Güncellenmiş döviz verilerini belgeye güncelleyin
         await updateDoc(docRef, { Döviz: updatedDoviz });

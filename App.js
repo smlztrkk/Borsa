@@ -1,5 +1,6 @@
 import "react-native-gesture-handler";
 import { StyleSheet, View, Text } from "react-native";
+import { useState, useEffect } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
@@ -13,6 +14,7 @@ import Explore from "./screens/Explore";
 import { AntDesign, FontAwesome5, MaterialIcons } from "@expo/vector-icons";
 import { RootSiblingParent } from "react-native-root-siblings";
 import ForgotPassword from "./screens/ForgotPassword";
+import { auth } from "./Firebase";
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
@@ -167,11 +169,23 @@ function MainScreen() {
 }
 
 export default function App() {
+  const [initialRoute, setInitialRoute] = useState("MainScreen"); //todo Login
+  useEffect(() => {
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        //console.log("kullanıcı girişi var");
+        //setInitialRoute("MainScreen");
+      } else {
+        //console.log("kullanıcı girişi yapmalı");
+        //setInitialRoute("Login");
+      }
+    });
+  }, []);
   return (
     <RootSiblingParent>
       <NavigationContainer>
         <Stack.Navigator
-          initialRouteName="MainScreen"
+          initialRouteName={initialRoute}
           screenOptions={{ headerShown: false }}
         >
           <Stack.Screen name="MainScreen" component={MainScreen} />

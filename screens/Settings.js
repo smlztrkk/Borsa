@@ -9,6 +9,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { auth } from "../Firebase";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import WatchList from "../components/WatchList";
+import Loading from "../components/Loading";
 
 export default function Settings({ navigation }) {
   // const showtoast = () => {
@@ -27,10 +28,7 @@ export default function Settings({ navigation }) {
           backgroundColor: "rgb(11,20,27)",
         }}
       >
-        <ActivityIndicator size={"large"} color={"rgba(255,255,255,0.8)"} />
-        <Text style={{ color: "rgba(255,255,255,0.5)" }}>
-          Çıkış Yapılıyor...
-        </Text>
+        <Loading text={"Çıkış Yapılıyor..."} />
       </SafeAreaView>
     );
   }

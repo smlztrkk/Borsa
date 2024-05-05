@@ -15,9 +15,74 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 export default function WatchList() {
   const [watch, setWatch] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [fdata, setFdata] = useState([]);
+  const [ffdata, setFfdata] = useState([]);
   useEffect(() => {
     getData();
+    getHisse();
+    getDoviz();
   }, []); // `button` değişkenine bağlı olarak `useEffect` çalıştırılacak
+  //? --------------- firebase ye kod kadet portfolioya ve bunu ana firesoterdan kodlar  ile çek search ekranında ana firestore verilerini fdata ile çekip filtreleme işlemi var
+  //?---------------- sadece modal ile code gönder ve bunu burada portfoliodan çek filtrele
+  const getHisse = async () => {
+    setIsLoading(true);
+    try {
+      const querySnapshot = await getDocs(collection(db, "Hisse"));
+      if (querySnapshot && typeof querySnapshot.forEach === "function") {
+        const newData = [];
+        querySnapshot.forEach((doc) => {
+          newData.push(doc.data());
+        });
+
+        // newData[0].responseData'nın varlığını ve doğru bir dizi olduğunu kontrol edin
+        if (newData.length > 0 && Array.isArray(newData[0].responseData)) {
+          setFdata(newData[0].responseData);
+          setIsLoading(false);
+        } else {
+          console.error("responseData geçersiz veya mevcut değil");
+        }
+      } else {
+        console.error("querySnapshot yineleyici ya da tanımsız");
+      }
+    } catch (error) {
+      console.error("Veri alma hatası 1:", error);
+    }
+  };
+  const getDoviz = async () => {
+    setIsLoading(true);
+    try {
+      const querySnapshot = await getDocs(collection(db, "Data"));
+      if (querySnapshot && typeof querySnapshot.forEach === "function") {
+        const newData = [];
+        querySnapshot.forEach((doc) => {
+          newData.push(doc.data());
+        });
+
+        // newData[0].responseData'nın varlığını ve doğru bir dizi olduğunu kontrol edin
+        if (newData.length > 0 && newData[0].response) {
+          setFfdata(newData[0].response);
+          //console.log(newData[0].response);
+          setIsLoading(false);
+        } else {
+          console.error("response geçersiz veya mevcut değil");
+        }
+      } else {
+        console.error("querySnapshot yineleyici ya da tanımsız");
+      }
+    } catch (error) {
+      console.error("Veri alma hatası 2:", error);
+    }
+  };
+
+  //const target2 = ffdataArray.filter((item) => ara.includes(item));
+  let filteredData = [];
+  if (ffdata) {
+    filteredData = Object.entries(ffdata).filter(([key, value]) => {
+      return key === watch;
+    });
+  }
+  const target2 = filteredData;
+  const [target, setTarget] = useState([]);
   const getData = async () => {
     try {
       setIsLoading(true);
@@ -28,13 +93,13 @@ export default function WatchList() {
           newData.push(doc.data());
         });
         // newData[0].responseData'nın varlığını ve doğru bir dizi olduğunu kontrol edin
+        //console.log(newData[0].Döviz);
         if (newData.length > 0 && Array.isArray(newData[0].Döviz)) {
-          console.log(newData[0].Döviz);
-          //?----------------
+          //console.log(newData[0].Döviz);
+
           {
-            /*
-          const docRef = doc(db, "Portfolio", "p2EkbErmx4HtU922yB2b");
-            const docSnapshot = await getDoc(docRef);
+            /*const docRef = doc(db, "Portfolio", "p2EkbErmx4HtU922yB2b");
+          const docSnapshot = await getDoc(docRef);
           let existingData = {};
 
           if (docSnapshot.exists()) {
@@ -42,9 +107,9 @@ export default function WatchList() {
           }
 
           // Mevcut döviz verilerini alın
-          let existingDoviz = existingData.Döviz || [];
+          let existingDoviz = existingData.Döviz[0].code || [];
           // Gelen target bilgisinin mevcut döviz verileri ile eşleşmesini kontrol edin
-          const targetCode = target[0].code;
+          const targetCode = newData[0].Döviz[0].code;
           const isExisting = existingDoviz.some(
             (doviz) => doviz === targetCode
           );
@@ -57,9 +122,32 @@ export default function WatchList() {
             await updateDoc(docRef, { Döviz: updatedDoviz });
           }*/
           }
-          //?--------------------------------------------
+          //console.log(newData[0].Döviz);
 
           setWatch(newData[0].Döviz);
+          // watch ve fdata'dan verileri karşılaştırıp target dizisine ekleme
+          //?--------------------------------
+          // watch içerisindeki öğelerin verilerini daha hızlı aramak için bir set kullanıyoruz
+          setTarget([]);
+          const watchSet = new Set(watch.map((item) => item));
+
+          // fdata'dan geçip sadece watchSet içinde bulunan kodları filtreleme
+          const newItems = fdata.filter((item) => watchSet.has(item.code));
+
+          // setTarget fonksiyonunu kullanarak hedef listesini güncelleme
+          setTarget((prevTarget) => {
+            // prevTarget listesi içindeki mevcut kodları bir set olarak saklama
+            const prevCodesSet = new Set(prevTarget.map((item) => item.code));
+
+            // prevTarget'ta mevcut olmayan yeni öğeleri filtreleme
+            const itemsToAdd = newItems.filter(
+              (item) => !prevCodesSet.has(item.code)
+            );
+
+            // prevTarget'a yeni öğeleri ekleyip sonucu döndürme
+            return [...prevTarget, ...itemsToAdd];
+          });
+
           setIsLoading(false);
         } else {
           console.error("responseData geçersiz veya mevcut değil");
@@ -70,7 +158,7 @@ export default function WatchList() {
         setIsLoading(false);
       }
     } catch (error) {
-      console.error("Veri alma hatası:", error);
+      console.log("Veri alma hatası 3:", error);
       setIsLoading(false);
     }
   };
@@ -98,8 +186,9 @@ export default function WatchList() {
       // Gelen target kodunun mevcut döviz verileri ile eşleşmesini kontrol edin
       const targetCode = target.code;
       const indexToRemove = existingDoviz.findIndex(
-        (doviz) => doviz.code === targetCode
+        (doviz) => doviz === targetCode
       );
+      console.log(existingDoviz);
 
       if (indexToRemove !== -1) {
         // Mevcut döviz verilerinden hedef kodu çıkarın
@@ -109,7 +198,9 @@ export default function WatchList() {
         await updateDoc(docRef, { Döviz: existingDoviz });
 
         console.log("Hedef kodu mevcut döviz verilerinden başarıyla silindi.");
+
         getData();
+        getHisse();
       } else {
         console.log("Hedef kod mevcut döviz verileri arasında bulunamadı.");
       }
@@ -132,7 +223,10 @@ export default function WatchList() {
         }}
       >
         <TouchableOpacity
-          onPress={() => getData()}
+          onPress={() => {
+            getData();
+            getHisse();
+          }}
           style={{
             alignItems: "center",
             justifyContent: "center",
@@ -159,7 +253,7 @@ export default function WatchList() {
         //??? bunu tutmamın sebebi button ile ilme işlemini yapmak için ayrı bir flatlist olsun
         <FlatList
           style={{}}
-          data={watch}
+          data={target}
           keyExtractor={(item, index) => index.toString()} // keyExtractor düzeltildi
           numColumns={1}
           renderItem={({ item, index }) => {

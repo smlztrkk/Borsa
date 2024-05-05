@@ -78,7 +78,7 @@ export default function ForgotPassword({ navigation }) {
           }}
         >
           <Image
-            source={require("../img/Borsa.png")}
+            source={require("../img/Borsa3.png")}
             style={{ width: 250, height: 250 }}
           />
         </View>

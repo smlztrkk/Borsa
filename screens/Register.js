@@ -52,7 +52,7 @@ export default function Register({ navigation }) {
           }}
         >
           <Image
-            source={require("../img/Borsa1.png")}
+            source={require("../img/Borsa3.png")}
             style={{ width: 250, height: 250 }}
           />
         </View>
