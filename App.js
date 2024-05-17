@@ -11,14 +11,15 @@ import Portfolio from "./screens/Portfolio";
 import Settings from "./screens/Settings";
 import Search from "./screens/Search";
 import Explore from "./screens/Explore";
-import { AntDesign, FontAwesome5, MaterialIcons } from "@expo/vector-icons";
+import { AntDesign, MaterialIcons } from "@expo/vector-icons";
 import { RootSiblingParent } from "react-native-root-siblings";
 import ForgotPassword from "./screens/ForgotPassword";
 import { auth } from "./Firebase";
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
-function MainScreen() {
+function MainScreen({ route }) {
+  const { user } = route.params;
   return (
     <Tab.Navigator
       screenOptions={{
@@ -144,6 +145,7 @@ function MainScreen() {
       <Tab.Screen
         name="Settings"
         component={Settings}
+        initialParams={{ user: user }}
         options={{
           tabBarIcon: ({ focused }) => {
             return (
@@ -169,15 +171,16 @@ function MainScreen() {
 }
 
 export default function App() {
-  const [initialRoute, setInitialRoute] = useState("MainScreen"); //todo Login
+  const [user, setUser] = useState("");
+  const [initialRoute, setInitialRoute] = useState("Login"); //todo Login
   useEffect(() => {
     auth.onAuthStateChanged((user) => {
       if (user) {
-        //console.log("kullanıcı girişi var");
-        //setInitialRoute("MainScreen");
+        console.log(user);
+        setUser(user);
+        setInitialRoute("MainScreen");
       } else {
-        //console.log("kullanıcı girişi yapmalı");
-        //setInitialRoute("Login");
+        setInitialRoute("Login");
       }
     });
   }, []);
@@ -188,7 +191,11 @@ export default function App() {
           initialRouteName={initialRoute}
           screenOptions={{ headerShown: false }}
         >
-          <Stack.Screen name="MainScreen" component={MainScreen} />
+          <Stack.Screen
+            name="MainScreen"
+            component={MainScreen}
+            initialParams={{ user: user }}
+          />
           <Stack.Screen name="Login" component={Login} />
           <Stack.Screen name="Register" component={Register} />
           <Stack.Screen name="ForgotPassword" component={ForgotPassword} />

@@ -4,7 +4,6 @@ import {
   View,
   TextInput,
   Image,
-  ActivityIndicator,
   ScrollView, //ToastAndroid,
 } from "react-native";
 import React, { useState } from "react";
@@ -18,9 +17,7 @@ export default function Login({ navigation }) {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const text = "Giriş yapılıyor...";
-  // const showtoast = () => {
-  //   ToastAndroid.show("başarılı", ToastAndroid.LONG);
-  // };
+
   if (isLoading) {
     return <Loading text={text} />;
   }
@@ -31,8 +28,9 @@ export default function Login({ navigation }) {
         .signInWithEmailAndPassword(email, password)
         .then((userCredentials) => {
           const user = userCredentials.user;
-          setIsLoading(false);
           navigation.push("MainScreen");
+
+          setIsLoading(false);
         });
     } catch (error) {
       setIsLoading(false);

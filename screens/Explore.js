@@ -39,7 +39,7 @@ export default function Explore() {
     };
 
     fetcDhData();
-  }, []); // useEffect'in sadece bir kere çalışması için boş bir bağımlılık dizisi kullanılıyor
+  }, [button]); // useEffect'in sadece bir kere çalışması için boş bir bağımlılık dizisi kullanılıyor
 
   const hissesenedi = "https://api.collectapi.com/economy/hisseSenedi";
   const döviz =
@@ -56,7 +56,7 @@ export default function Explore() {
       const response = await axios.get(hissesenedi, {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `${enes}`,
+          Authorization: `${smlztrkk2001}`,
         },
       });
       setResponseData(response.data.result);
@@ -110,30 +110,32 @@ export default function Explore() {
   };
   //todo
   const [fdata, setFdata] = useState([]);
-  useEffect(() => {
-    const getData = async () => {
-      try {
-        const querySnapshot = await getDocs(collection(db, "Hisse"));
-        if (querySnapshot && typeof querySnapshot.forEach === "function") {
-          const newData = [];
-          querySnapshot.forEach((doc) => {
-            newData.push(doc.data());
-          });
 
-          // newData[0].responseData'nın varlığını ve doğru bir dizi olduğunu kontrol edin
-          if (newData.length > 0 && Array.isArray(newData[0].responseData)) {
-            setFdata(newData[0].responseData);
-          } else {
-            console.error("responseData geçersiz veya mevcut değil");
-          }
+  const getData = async () => {
+    try {
+      const querySnapshot = await getDocs(collection(db, "Hisse"));
+      if (querySnapshot && typeof querySnapshot.forEach === "function") {
+        const newData = [];
+        querySnapshot.forEach((doc) => {
+          newData.push(doc.data());
+        });
+
+        // newData[0].responseData'nın varlığını ve doğru bir dizi olduğunu kontrol edin
+        if (newData.length > 0 && Array.isArray(newData[0].responseData)) {
+          setFdata(newData[0].responseData);
         } else {
-          console.error("querySnapshot yineleyici ya da tanımsız");
+          console.error("responseData geçersiz veya mevcut değil");
         }
-      } catch (error) {
-        console.error("Veri alma hatası:", error);
+      } else {
+        console.error("querySnapshot yineleyici ya da tanımsız");
       }
-    };
-
+    } catch (error) {
+      console.error("Veri alma hatası:", error);
+    }
+  };
+  useEffect(() => {
+    DovizUp();
+    HisseUp();
     getData();
   }, [button]); // `button` değişkenine bağlı olarak `useEffect` çalıştırılacak
 
@@ -214,6 +216,7 @@ export default function Explore() {
               DovizUp();
               fetchHData();
               HisseUp();
+              setButton(!button);
             }}
             style={{
               width: 40,
@@ -229,6 +232,7 @@ export default function Explore() {
           <TouchableOpacity
             onPress={() => {
               setButton(false);
+              getData();
             }}
             style={{
               width: 150,

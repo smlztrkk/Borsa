@@ -110,7 +110,7 @@ export default function Search() {
     setIsLoading(true);
 
     // Belge referansını tanımlayın
-    const docRef = doc(db, "Portfolio", "p2EkbErmx4HtU922yB2b");
+    const docRef = doc(db, "WatchList", "MJ7hC1bZmcLuIuZjmYKZ");
 
     try {
       // Mevcut belge verilerini alın
@@ -122,7 +122,7 @@ export default function Search() {
       }
 
       // Mevcut döviz verilerini alın
-      let existingDoviz = existingData.Döviz || [];
+      let existingDoviz = existingData.Hisse || [];
       // Gelen target bilgisinin mevcut döviz verileri ile eşleşmesini kontrol edin
       console.log(existingDoviz);
       const targetCode = target[0].code;
@@ -134,7 +134,7 @@ export default function Search() {
         const updatedDoviz = [...existingDoviz, targetCode];
 
         // Güncellenmiş döviz verilerini belgeye güncelleyin
-        await updateDoc(docRef, { Döviz: updatedDoviz });
+        await updateDoc(docRef, { Hisse: updatedDoviz });
 
         console.log("Başarılı hisse güncelleme.");
       } else {
@@ -143,6 +143,46 @@ export default function Search() {
       setIsLoading(false);
     } catch (error) {
       console.error("Belgeyi güncellerken hata oluştu:", error);
+      setIsLoading(false);
+    }
+  };
+  const DovizEkle = async (target) => {
+    setIsLoading(true);
+
+    // Belge referansını tanımlayın
+    const docRef = doc(db, "WatchList", "MJ7hC1bZmcLuIuZjmYKZ");
+
+    try {
+      // Mevcut belge verilerini alın
+      const docSnapshot = await getDoc(docRef);
+      let existingData = {};
+
+      if (docSnapshot.exists()) {
+        existingData = docSnapshot.data();
+      }
+
+      // Mevcut döviz verilerini alın
+      let existingDoviz = existingData.Doviz || [];
+      // Gelen target bilgisinin mevcut döviz verileri ile eşleşmesini kontrol edin
+      console.log(existingDoviz);
+      const targetCode = target;
+      console.log(targetCode);
+      const isExisting = existingDoviz.some((doviz) => doviz === targetCode);
+
+      if (!isExisting) {
+        // Eğer target kodu mevcut döviz verileri arasında yoksa, ekleyin
+        const updatedDoviz = [...existingDoviz, targetCode];
+
+        // Güncellenmiş döviz verilerini belgeye güncelleyin
+        await updateDoc(docRef, { Doviz: updatedDoviz });
+
+        console.log("Başarılı hisse güncelleme.");
+      } else {
+        alert("Bu kod zaten mevcut hisse verileri arasında.");
+      }
+      setIsLoading(false);
+    } catch (error) {
+      console.error("Döviz güncellerken hata oluştu:", error);
       setIsLoading(false);
     }
   };
@@ -492,10 +532,22 @@ export default function Search() {
                 elevation: 2,
                 backgroundColor: "#2196F3",
               }}
-              onPress={() => HisseEkle(target)}
+              onPress={() =>
+                selectedId == 1 ? HisseEkle(target) : DovizEkle(target2[0][0])
+              }
             >
               <Text style={styles.textStyle}>
-                {target.length > 0 ? target[0].code : "yok"}
+                {selectedId == 1 ? (
+                  target.length > 0 ? (
+                    <Text>{target[0].code}</Text>
+                  ) : (
+                    "yok"
+                  )
+                ) : target2.length > 0 ? (
+                  target2[0][0]
+                ) : (
+                  "yok"
+                )}
               </Text>
             </Pressable>
           </View>

@@ -1,9 +1,4 @@
-import {
-  StyleSheet,
-  Text, //ToastAndroid,
-  View,
-  ActivityIndicator,
-} from "react-native";
+import { StyleSheet, View, Text } from "react-native";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { auth } from "../Firebase";
@@ -11,10 +6,9 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import WatchList from "../components/WatchList";
 import Loading from "../components/Loading";
 
-export default function Settings({ navigation }) {
-  // const showtoast = () => {
-  //   ToastAndroid.show("başarılı", ToastAndroid.LONG);
-  // };
+export default function Settings({ navigation, route }) {
+  const { user } = route.params;
+
   const [isLoading, setIsLoading] = useState(false);
 
   if (isLoading) {
@@ -54,6 +48,8 @@ export default function Settings({ navigation }) {
           gap: 20,
         }}
       >
+        <Text style={{ color: "white" }}>USER : {user.email}</Text>
+        <Text style={{ color: "white" }}>USER ID: {user.uid}</Text>
         <View style={{ width: "70%" }}>
           <TouchableOpacity
             onPress={SingOut}
