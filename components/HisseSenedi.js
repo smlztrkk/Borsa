@@ -26,7 +26,6 @@ export default function HisseSenedi({ fdata }) {
                 backgroundColor: "rgb(28,37,44)",
                 borderRadius: 15,
                 paddingVertical: 20,
-                paddingHorizontal: 10,
                 marginVertical: 10,
                 marginHorizontal: 20,
                 flexDirection: "row",
@@ -34,7 +33,7 @@ export default function HisseSenedi({ fdata }) {
                 justifyContent: "space-around",
               }}
             >
-              <View style={{ width: "50%" }}>
+              <View style={{ width: "40%" }}>
                 <Text
                   style={{
                     color: "rgb(239, 108, 0)",
@@ -56,22 +55,14 @@ export default function HisseSenedi({ fdata }) {
                 </Text>
                 <Text
                   style={{
-                    color: "rgb(255, 64, 129)",
-                    fontSize: 16,
-                    fontWeight: 300,
+                    color: "rgb(255, 1004, 129)",
+                    fontSize: 14,
+                    fontWeight: 500,
                   }}
                 >
                   Fiyat: {item.lastpricestr}
                 </Text>
-                <Text
-                  style={{
-                    color: "rgb(0, 150, 150)",
-                    fontSize: 12,
-                    fontWeight: 400,
-                  }}
-                >
-                  Hacim: {item.hacimstr}
-                </Text>
+
                 <Text
                   style={{
                     color: "rgb(33, 150, 243)",
@@ -79,12 +70,12 @@ export default function HisseSenedi({ fdata }) {
                     fontWeight: 700,
                   }}
                 >
-                  Güncellenme zamanı: {item.time}
+                  Güncellenme: {item.time}
                 </Text>
               </View>
               <View
                 style={{
-                  width: "30%",
+                  width: "40%",
                 }}
               >
                 <View
@@ -92,6 +83,14 @@ export default function HisseSenedi({ fdata }) {
                     flexDirection: "row",
                     justifyContent: "center",
                     alignItems: "center",
+                    paddingVertical: 5,
+                    borderRadius: 10,
+                    backgroundColor:
+                      item.rate > 0
+                        ? "rgba(0, 255, 0,0.1)"
+                        : item.rate == 0
+                        ? "rgba(125, 125, 125,0.1)"
+                        : "rgba(255, 0, 0,0.1)",
                   }}
                 >
                   <Text
@@ -112,19 +111,19 @@ export default function HisseSenedi({ fdata }) {
                     {item.rate > 0 ? (
                       <MaterialIcons
                         name="arrow-drop-up"
-                        size={32}
+                        size={28}
                         color="rgb(0, 255, 0)"
                       />
                     ) : item.rate == 0 ? (
                       <MaterialIcons
                         name="arrow-left"
-                        size={32}
+                        size={28}
                         color="rgb(125, 125, 125)"
                       />
                     ) : (
                       <MaterialIcons
                         name="arrow-drop-down"
-                        size={32}
+                        size={28}
                         color="rgb(255, 0, 0)"
                       />
                     )}
@@ -132,29 +131,47 @@ export default function HisseSenedi({ fdata }) {
                 </View>
                 <View
                   style={{
-                    flexDirection: "column",
                     alignItems: "center",
-                    justifyContent: "space-between",
+                    justifyContent: "center",
                   }}
                 >
                   <Text
                     style={{
-                      color: "rgb(144, 164, 174)",
+                      //color: "rgb(0, 150, 150)",
+                      color: "rgb(33, 150, 243)",
                       fontSize: 12,
-                      fontWeight: 700,
+                      fontWeight: 400,
                     }}
                   >
-                    Min: {item.minstr}
+                    Hacim: {item.hacimstr}
                   </Text>
-                  <Text
+                  <View
                     style={{
-                      color: "rgb(144, 164, 174)",
-                      fontSize: 12,
-                      fontWeight: 700,
+                      flexDirection: "row",
+                      alignItems: "center",
+                      gap: 15,
+                      justifyContent: "space-between",
                     }}
                   >
-                    Max: {item.maxstr}
-                  </Text>
+                    <Text
+                      style={{
+                        color: "rgb(144, 164, 174)",
+                        fontSize: 12,
+                        fontWeight: 600,
+                      }}
+                    >
+                      Min: {item.minstr}
+                    </Text>
+                    <Text
+                      style={{
+                        color: "rgb(144, 164, 174)",
+                        fontSize: 12,
+                        fontWeight: 700,
+                      }}
+                    >
+                      Max: {item.maxstr}
+                    </Text>
+                  </View>
                 </View>
               </View>
             </View>

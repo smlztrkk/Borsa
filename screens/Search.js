@@ -1,20 +1,24 @@
 import { StyleSheet, Text, View, Modal, Pressable } from "react-native";
 import React, { useEffect, useState, useMemo } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { FlatList, TextInput } from "react-native-gesture-handler";
+import { FlatList } from "react-native-gesture-handler";
+import { SegmentedButtons } from "react-native-paper";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { db } from "../Firebase";
 import {
   collection,
   getDocs,
   updateDoc,
+  setDoc,
   doc,
   getDoc,
 } from "firebase/firestore";
 import Loading from "../components/Loading";
-import RadioGroup from "react-native-radio-buttons-group";
+import { Searchbar } from "react-native-paper";
 
-export default function Search() {
+export default function Search({ route }) {
+  const { userId } = route.params;
+
   const [isLoading, setIsLoading] = useState(false);
   const [ara, setAra] = useState("");
   const [fdata, setFdata] = useState([]);
@@ -22,22 +26,9 @@ export default function Search() {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedId, setSelectedId] = useState(1);
   const [numColumns, setNumColumns] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
   const text = "Arayınız...";
-  const radioButtons = useMemo(
-    () => [
-      {
-        id: "1", // acts as primary key, should be unique and non-empty string
-        label: "Hisse senedi",
-        value: "Hisse",
-      },
-      {
-        id: "2",
-        label: "Döviz",
-        value: "Döviz",
-      },
-    ],
-    []
-  );
+
   const getData = async () => {
     setIsLoading(true);
     try {
@@ -73,9 +64,8 @@ export default function Search() {
         });
 
         // newData[0].responseData'nın varlığını ve doğru bir dizi olduğunu kontrol edin
-        if (newData.length > 0 && newData[0].response) {
-          setFfdata(newData[0].response);
-          //console.log(newData[0].response);
+        if (newData.length > 0 && newData[0].financeArray) {
+          setFfdata(newData[0].financeArray);
           setIsLoading(false);
         } else {
           console.error("response geçersiz veya mevcut değil");
@@ -98,10 +88,11 @@ export default function Search() {
   //const target2 = ffdataArray.filter((item) => ara.includes(item));
   let filteredData = [];
   if (ffdata) {
-    filteredData = Object.entries(ffdata).filter(([key, value]) => {
-      return key === ara;
+    filteredData = ffdata.filter((item) => {
+      return item.Code === ara;
     });
   }
+
   const target2 = filteredData;
   //console.log(target2[0]);
   //console.log(selectedId);
@@ -110,7 +101,7 @@ export default function Search() {
     setIsLoading(true);
 
     // Belge referansını tanımlayın
-    const docRef = doc(db, "WatchList", "MJ7hC1bZmcLuIuZjmYKZ");
+    const docRef = doc(db, "WatchList", userId);
 
     try {
       // Mevcut belge verilerini alın
@@ -119,6 +110,10 @@ export default function Search() {
 
       if (docSnapshot.exists()) {
         existingData = docSnapshot.data();
+      } else {
+        // Belge mevcut değilse, yeni bir belge oluşturun
+        await setDoc(docRef, { Hisse: [], Doviz: [] });
+        existingData = { Hisse: [], Doviz: [] };
       }
 
       // Mevcut döviz verilerini alın
@@ -150,7 +145,7 @@ export default function Search() {
     setIsLoading(true);
 
     // Belge referansını tanımlayın
-    const docRef = doc(db, "WatchList", "MJ7hC1bZmcLuIuZjmYKZ");
+    const docRef = doc(db, "WatchList", userId);
 
     try {
       // Mevcut belge verilerini alın
@@ -159,14 +154,16 @@ export default function Search() {
 
       if (docSnapshot.exists()) {
         existingData = docSnapshot.data();
+      } else {
+        // Belge mevcut değilse, yeni bir belge oluşturun
+        await setDoc(docRef, { Hisse: [], Doviz: [] });
+        existingData = { Hisse: [], Doviz: [] };
       }
 
       // Mevcut döviz verilerini alın
       let existingDoviz = existingData.Doviz || [];
       // Gelen target bilgisinin mevcut döviz verileri ile eşleşmesini kontrol edin
-      console.log(existingDoviz);
       const targetCode = target;
-      console.log(targetCode);
       const isExisting = existingDoviz.some((doviz) => doviz === targetCode);
 
       if (!isExisting) {
@@ -176,9 +173,9 @@ export default function Search() {
         // Güncellenmiş döviz verilerini belgeye güncelleyin
         await updateDoc(docRef, { Doviz: updatedDoviz });
 
-        console.log("Başarılı hisse güncelleme.");
+        console.log("Başarılı döviz güncelleme.");
       } else {
-        alert("Bu kod zaten mevcut hisse verileri arasında.");
+        alert("Bu kod zaten mevcut döviz verileri arasında.");
       }
       setIsLoading(false);
     } catch (error) {
@@ -186,7 +183,6 @@ export default function Search() {
       setIsLoading(false);
     }
   };
-
   return (
     <SafeAreaView
       style={{
@@ -207,26 +203,32 @@ export default function Search() {
             alignItems: "center",
           }}
         >
-          <TextInput
+          <Searchbar
+            placeholder="Arayınız..."
+            placeholderTextColor={"gray"}
+            loading={false}
+            style={{
+              backgroundColor: "rgb(27,38,44)",
+              width: "65%",
+
+              margin: 10,
+              height: 50,
+            }}
+            color="white"
+            elevation={5}
+            rippleColor={"gray"}
             onChangeText={(text) => {
               setAra(text.toUpperCase());
             }}
-            style={{
-              width: "60%",
-              height: 50,
-              margin: 10,
-              paddingLeft: 10,
-              borderRadius: 10,
-              backgroundColor: "rgb(27,38,44)",
-              color: "white",
-            }}
+            value={ara}
           />
+
           <TouchableOpacity
             style={{
               backgroundColor: "rgb(14,239,158)",
               width: 75,
               height: 50,
-              borderRadius: 10,
+              borderRadius: 25,
               justifyContent: "center",
               alignItems: "center",
             }}
@@ -239,12 +241,35 @@ export default function Search() {
           </TouchableOpacity>
         </View>
         <View>
-          <RadioGroup
-            radioButtons={radioButtons}
-            onPress={setSelectedId}
-            selectedId={selectedId}
-            labelStyle={{ color: "white" }}
-            layout="row"
+          <SegmentedButtons
+            value={selectedId}
+            onValueChange={setSelectedId}
+            buttons={[
+              {
+                value: "1",
+                label: "Hisse senedi",
+                labelStyle: {
+                  color: selectedId === "1" ? "white" : "gray",
+                },
+                style: {
+                  backgroundColor:
+                    selectedId === "1" ? "gray" : "rgb(27,38,44)",
+                },
+              },
+              {
+                value: "2",
+                label: "Döviz",
+                labelStyle: {
+                  color: selectedId === "2" ? "white" : "gray",
+                },
+                style: {
+                  backgroundColor:
+                    selectedId === "2" ? "gray" : "rgb(27,38,44)",
+                },
+              },
+            ]}
+            density="regular"
+            style={{ width: 300, marginVertical: 15 }}
           />
         </View>
       </View>
@@ -375,6 +400,10 @@ export default function Search() {
             keyExtractor={(item, index) => index.toString()} // keyExtractor düzeltildi
             numColumns={numColumns}
             renderItem={({ item, index }) => {
+              const degisimStr = item.Değişim;
+              const degisim = degisimStr
+                ? parseFloat(degisimStr.replace(/,/g, ".").replace(/%/g, ""))
+                : null;
               return (
                 <TouchableOpacity
                   onLongPress={() => {
@@ -394,66 +423,82 @@ export default function Search() {
                       marginHorizontal: "27%",
                       justifyContent: "center",
                       alignItems: "center",
+                      borderWidth: 1,
+                      borderColor: (() => {
+                        if (degisim > 0) return "rgba(0, 255, 0,0.5)";
+                        if (degisim === 0) return "rgba(125, 125, 125,0.5)";
+                        return "rgba(255, 0, 0,0.5)";
+                      })(),
                     }}
                   >
-                    <View style={{ flex: 1, justifyContent: "space-around" }}>
+                    <View
+                      style={{
+                        flex: 1,
+                        justifyContent: "space-around",
+                        alignItems: "center",
+                      }}
+                    >
                       <Text
                         style={{
                           color: "white",
-                          fontSize: item[1].Tür == "Altın" ? 18 : 28,
+                          fontSize: item.Tür == "Altın" ? 18 : 28,
                           fontWeight: 900,
                           marginBottom: 5,
                           textAlign: "center",
                         }}
                       >
-                        {item[0]}
+                        {item.Code}
                       </Text>
                       <View
                         style={{
-                          width: 100,
-                          borderWidth: 2,
+                          width: 130,
+                          borderWidth: 1,
                           borderColor: "rgb(39, 57, 79)",
                         }}
                       />
                       <Text
                         style={{
-                          color: "green",
+                          color: "rgb(255, 1004, 129)",
                           fontSize: 18,
                           fontWeight: 400,
                         }}
                       >
-                        Alış: {item[1].Alış}
+                        Alış: {item.Alış}
                       </Text>
                       <Text
-                        style={{ color: "red", fontSize: 18, fontWeight: 400 }}
+                        style={{
+                          color: "rgb(33, 150, 243)",
+                          fontSize: 18,
+                          fontWeight: 400,
+                        }}
                       >
-                        Satış: {item[1].Satış}
+                        Satış: {item.Satış}
                       </Text>
                       <View
                         style={{
-                          width: 100,
-                          borderWidth: 2,
+                          width: 130,
+                          borderWidth: 1,
                           borderColor: "rgb(39, 57, 79)",
                         }}
                       />
                       <Text
                         style={{
-                          color:
-                            item[1].Değişim > 0
-                              ? "rgb(0, 255, 0)"
-                              : item.rate == 0
-                              ? "rgb(125, 125, 125)"
-                              : "rgb(255, 0, 0)",
+                          color: (() => {
+                            if (degisim > 0) return "rgb(0, 255, 0)";
+                            if (degisim === 0) return "rgb(125, 125, 125)";
+                            return "rgb(255, 0, 0)";
+                          })(),
                           fontSize: 16,
-                          fontWeight: 300,
+                          fontWeight: "300", // Font weight should be a string
                         }}
                       >
-                        Değişim: {item[1].Değişim}
+                        Değişim: {item.Değişim.replace(/-|%/g, "")}
                       </Text>
+
                       <View
                         style={{
-                          width: 100,
-                          borderWidth: 2,
+                          width: 130,
+                          borderWidth: 1,
                           borderColor: "rgb(39, 57, 79)",
                         }}
                       />
@@ -465,7 +510,7 @@ export default function Search() {
                           textAlign: "center",
                         }}
                       >
-                        Tür: {item[1].Tür}
+                        Tür: {item.Tür}
                       </Text>
                     </View>
                   </View>
@@ -533,7 +578,7 @@ export default function Search() {
                 backgroundColor: "#2196F3",
               }}
               onPress={() =>
-                selectedId == 1 ? HisseEkle(target) : DovizEkle(target2[0][0])
+                selectedId == 1 ? HisseEkle(target) : DovizEkle(target2[0].Code)
               }
             >
               <Text style={styles.textStyle}>
@@ -544,7 +589,7 @@ export default function Search() {
                     "yok"
                   )
                 ) : target2.length > 0 ? (
-                  target2[0][0]
+                  target2[0].Code
                 ) : (
                   "yok"
                 )}

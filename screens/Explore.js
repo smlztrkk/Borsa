@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, ActivityIndicator } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { TouchableOpacity } from "react-native-gesture-handler";
@@ -19,27 +19,27 @@ export default function Explore() {
   const [button, setButton] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const text = "Veriler yükleniyor...";
-  const [financeData, setFinanceData] = useState([]);
+  const [financeData, setFinanceData] = useState(null);
   const [responseData, setResponseData] = useState(null);
-  useEffect(() => {
+
+  const fetcDhData = async () => {
     setIsLoading(true);
+    try {
+      const response = await axios.get(
+        "https://finans.truncgil.com/today.json"
+      );
 
-    const fetcDhData = async () => {
-      try {
-        const response = await axios.get(
-          "https://finans.truncgil.com/today.json"
-        );
-        setFinanceData(response.data);
+      setFinanceData(response.data);
 
-        //console.log(response.data);
-        setIsLoading(false);
-      } catch (error) {
-        alert("Bir hata oluştu:", error);
-      }
-    };
-
+      //console.log(response.data);
+      setIsLoading(false);
+    } catch (error) {
+      alert("Bir hata oluştu:", error);
+    }
+  };
+  useEffect(() => {
     fetcDhData();
-  }, [button]); // useEffect'in sadece bir kere çalışması için boş bir bağımlılık dizisi kullanılıyor
+  }, []);
 
   const hissesenedi = "https://api.collectapi.com/economy/hisseSenedi";
   const döviz =
@@ -76,7 +76,8 @@ export default function Explore() {
       setGelen(doc.data());
     });
   }, []);
-  const DovizUp = async () => {
+  {
+    /*const DovizUp = async () => {
     setIsLoading(true);
     try {
       const docRef = await updateDoc(doc(db, "Data", "eWser7DqScJIIDd3PYVW"), {
@@ -87,7 +88,8 @@ export default function Explore() {
     } catch (e) {
       console.error("Error adding document: ", e);
     }
-  };
+  };*/
+  }
   //console.log(responseData);
   let date = new Date();
   const HisseUp = async () => {
@@ -108,6 +110,34 @@ export default function Explore() {
       console.error("Error adding document: ", e);
     }
   };
+  const DovizUp = async () => {
+    let date = new Date();
+    try {
+      if (financeData != null) {
+        const financeArray = Object.entries(financeData)
+          .slice(1)
+          .map(([key, value]) => ({
+            Code: key,
+            ...value,
+          }));
+
+        const docRef = await updateDoc(
+          doc(db, "Data", "eWser7DqScJIIDd3PYVW"),
+          {
+            response: { date },
+            financeArray,
+          }
+        );
+
+        console.log("Başarılı döviz");
+      } else {
+        console.log("financeData null");
+      }
+    } catch (e) {
+      console.error("Error adding document: ", e);
+    }
+  };
+
   //todo
   const [fdata, setFdata] = useState([]);
 
@@ -120,7 +150,6 @@ export default function Explore() {
           newData.push(doc.data());
         });
 
-        // newData[0].responseData'nın varlığını ve doğru bir dizi olduğunu kontrol edin
         if (newData.length > 0 && Array.isArray(newData[0].responseData)) {
           setFdata(newData[0].responseData);
         } else {
@@ -137,24 +166,23 @@ export default function Explore() {
     DovizUp();
     HisseUp();
     getData();
-  }, [button]); // `button` değişkenine bağlı olarak `useEffect` çalıştırılacak
-
+  }, [button]);
+  //!!data firestordan çekilimi
   const [data, setData] = useState([]);
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const querySnapshot = await getDocs(collection(db, "Hisse"));
+        const querySnapshot = await getDocs(collection(db, "Data"));
         const fetchedDataaa = [];
         querySnapshot.forEach((doc) => {
           fetchedDataaa.push(doc.data());
         });
         //console.log(fetchedDataaa[0].response);
-        setData(fetchedDataaa[0].response);
+        setData(fetchedDataaa[0]);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
-
     fetchData();
   }, []);
 
@@ -186,11 +214,14 @@ export default function Explore() {
             justifyContent: "space-between",
             alignItems: "center",
             backgroundColor: "rgb(28,37,44)",
+            borderWidth: 1,
+            borderColor: "rgb(38,47,54)",
           }}
         >
           <TouchableOpacity
             onPress={() => {
               setButton(true);
+              fetcDhData();
             }}
             style={{
               width: 150,
@@ -213,10 +244,10 @@ export default function Explore() {
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {
-              DovizUp();
               fetchHData();
+              fetcDhData();
+              DovizUp();
               HisseUp();
-              setButton(!button);
             }}
             style={{
               width: 40,
@@ -281,12 +312,3 @@ export default function Explore() {
 }
 
 const styles = StyleSheet.create({});
-{
-  /*<View>
-                    <Text>{item}</Text>
-                    <Text>{financeData[item]["Alış"]}</Text>
-                    <Text>{financeData[item]["Satış"]}</Text>
-                    <Text>{financeData[item]["Tür"]}</Text>
-                    <Text>{financeData[item]["Değişim"]}</Text>
-                  </View>*/
-}

@@ -1,5 +1,5 @@
 import "react-native-gesture-handler";
-import { StyleSheet, View, Text } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { useState, useEffect } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -11,15 +11,17 @@ import Portfolio from "./screens/Portfolio";
 import Settings from "./screens/Settings";
 import Search from "./screens/Search";
 import Explore from "./screens/Explore";
+import { Provider as PaperProvider } from "react-native-paper";
 import { AntDesign, MaterialIcons } from "@expo/vector-icons";
 import { RootSiblingParent } from "react-native-root-siblings";
 import ForgotPassword from "./screens/ForgotPassword";
 import { auth } from "./Firebase";
+
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
 function MainScreen({ route }) {
-  const { user } = route.params;
+  const { userId, userEmail } = route.params;
   return (
     <Tab.Navigator
       screenOptions={{
@@ -43,127 +45,107 @@ function MainScreen({ route }) {
         name="Explore"
         component={Explore}
         options={{
-          tabBarIcon: ({ focused }) => {
-            return (
-              <View
-                style={
-                  (focused ? {} : {},
-                  {
-                    alignItems: "center",
-                    justifyContent: "center",
-                    position: "absolute",
-                  })
-                }
-              >
-                <AntDesign
-                  name="home"
-                  size={focused ? 32 : 24}
-                  color={focused ? "aqua" : "rgb(29, 87, 159)"}
-                />
-                {/* <Text
-                  style={{
-                    color: focused ? "aqua" : "gray",
-                    fontSize: focused ? 16 : 10,
-                  }}
-                >
-                  ana
-                </Text> */}
-              </View>
-            );
-          },
+          tabBarIcon: ({ focused }) => (
+            <View
+              style={{
+                alignItems: "center",
+                justifyContent: "center",
+                position: "absolute",
+              }}
+            >
+              <AntDesign
+                name="home"
+                size={focused ? 32 : 24}
+                color={focused ? "aqua" : "rgb(29, 87, 159)"}
+              />
+            </View>
+          ),
         }}
       />
       <Tab.Screen
         name="Search"
         component={Search}
+        initialParams={{ userId: userId }}
         options={{
-          tabBarIcon: ({ focused }) => {
-            return (
-              <View
-                style={{
-                  alignItems: "center",
-                  justifyContent: "center",
-                  position: "absolute",
-                }}
-              >
-                <AntDesign
-                  name="search1"
-                  size={focused ? 32 : 24}
-                  color={focused ? "aqua" : "rgb(29, 87, 159)"}
-                />
-              </View>
-            );
-          },
+          tabBarIcon: ({ focused }) => (
+            <View
+              style={{
+                alignItems: "center",
+                justifyContent: "center",
+                position: "absolute",
+              }}
+            >
+              <AntDesign
+                name="search1"
+                size={focused ? 32 : 24}
+                color={focused ? "aqua" : "rgb(29, 87, 159)"}
+              />
+            </View>
+          ),
         }}
       />
       <Tab.Screen
         name="Trade"
         component={Trade}
         options={{
-          tabBarIcon: ({ focused }) => {
-            return (
-              <View
-                style={{
-                  alignItems: "center",
-                  justifyContent: "center",
-                  position: "absolute",
-                }}
-              >
-                <MaterialIcons
-                  name="compare-arrows"
-                  size={focused ? 42 : 36}
-                  color={focused ? "aqua" : "rgb(29, 87, 159)"}
-                />
-              </View>
-            );
-          },
+          tabBarIcon: ({ focused }) => (
+            <View
+              style={{
+                alignItems: "center",
+                justifyContent: "center",
+                position: "absolute",
+              }}
+            >
+              <MaterialIcons
+                name="compare-arrows"
+                size={focused ? 42 : 36}
+                color={focused ? "aqua" : "rgb(29, 87, 159)"}
+              />
+            </View>
+          ),
         }}
       />
       <Tab.Screen
         name="Portfolio"
         component={Portfolio}
         options={{
-          tabBarIcon: ({ focused }) => {
-            return (
-              <View
-                style={{
-                  alignItems: "center",
-                  justifyContent: "center",
-                  position: "absolute",
-                }}
-              >
-                <AntDesign
-                  name="wallet"
-                  size={focused ? 32 : 24}
-                  color={focused ? "aqua" : "rgb(29, 87, 159)"}
-                />
-              </View>
-            );
-          },
+          tabBarIcon: ({ focused }) => (
+            <View
+              style={{
+                alignItems: "center",
+                justifyContent: "center",
+                position: "absolute",
+              }}
+            >
+              <AntDesign
+                name="wallet"
+                size={focused ? 32 : 24}
+                color={focused ? "aqua" : "rgb(29, 87, 159)"}
+              />
+            </View>
+          ),
         }}
       />
       <Tab.Screen
         name="Settings"
         component={Settings}
-        initialParams={{ user: user }}
+        initialParams={{ userId: userId, userEmail: userEmail }}
         options={{
-          tabBarIcon: ({ focused }) => {
-            return (
-              <View
-                style={{
-                  alignItems: "center",
-                  justifyContent: "center",
-                  position: "absolute",
-                }}
-              >
-                <AntDesign
-                  name="setting"
-                  size={focused ? 32 : 24}
-                  color={focused ? "aqua" : "rgb(29, 87, 159)"}
-                />
-              </View>
-            );
-          },
+          tabBarIcon: ({ focused }) => (
+            <View
+              style={{
+                alignItems: "center",
+                justifyContent: "center",
+                position: "absolute",
+              }}
+            >
+              <AntDesign
+                name="setting"
+                size={focused ? 32 : 24}
+                color={focused ? "aqua" : "rgb(29, 87, 159)"}
+              />
+            </View>
+          ),
         }}
       />
     </Tab.Navigator>
@@ -171,8 +153,9 @@ function MainScreen({ route }) {
 }
 
 export default function App() {
-  const [user, setUser] = useState("");
-  const [initialRoute, setInitialRoute] = useState("Login"); //todo Login
+  const [initialRoute, setInitialRoute] = useState("Login");
+  const [user, setUser] = useState(null);
+
   useEffect(() => {
     auth.onAuthStateChanged((user) => {
       if (user) {
@@ -184,24 +167,29 @@ export default function App() {
       }
     });
   }, []);
+
   return (
-    <RootSiblingParent>
-      <NavigationContainer>
-        <Stack.Navigator
-          initialRouteName={initialRoute}
-          screenOptions={{ headerShown: false }}
-        >
-          <Stack.Screen
-            name="MainScreen"
-            component={MainScreen}
-            initialParams={{ user: user }}
-          />
-          <Stack.Screen name="Login" component={Login} />
-          <Stack.Screen name="Register" component={Register} />
-          <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </RootSiblingParent>
+    <PaperProvider>
+      <RootSiblingParent>
+        <NavigationContainer>
+          <Stack.Navigator
+            initialRouteName={initialRoute}
+            screenOptions={{ headerShown: false }}
+          >
+            {user && (
+              <Stack.Screen
+                name="MainScreen"
+                component={MainScreen}
+                initialParams={{ userId: user.uid, userEmail: user.email }}
+              />
+            )}
+            <Stack.Screen name="Login" component={Login} />
+            <Stack.Screen name="Register" component={Register} />
+            <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </RootSiblingParent>
+    </PaperProvider>
   );
 }
 

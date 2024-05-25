@@ -2,8 +2,8 @@ import {
   StyleSheet,
   Text,
   View,
-  TextInput,
   Image,
+  TextInput,
   ScrollView, //ToastAndroid,
 } from "react-native";
 import React, { useState } from "react";
@@ -16,6 +16,9 @@ export default function Login({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  const [isFocused, setIsFocused] = useState(false);
+  const [isFocused1, setIsFocused1] = useState(false);
   const text = "Giriş yapılıyor...";
 
   if (isLoading) {
@@ -37,6 +40,7 @@ export default function Login({ navigation }) {
       alert(error.message);
     }
   };
+
   return (
     <SafeAreaView style={styles.mainview}>
       <ScrollView>
@@ -78,20 +82,28 @@ export default function Login({ navigation }) {
           <TextInput
             placeholder="Email"
             value={email}
-            onChangeText={(text) => {
-              setEmail(text);
-            }}
+            onChangeText={(text) => setEmail(text)}
             placeholderTextColor={"rgba(148,147,152,1)"}
-            style={{
-              width: "70%",
-              maxWidth: 550,
-
-              padding: 15,
-              margin: 10,
-              borderRadius: 15,
-              color: "white",
-              backgroundColor: "rgba(27,38,44,1)",
-            }}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
+            style={[
+              {
+                width: "70%",
+                maxWidth: 550,
+                paddingHorizontal: 20,
+                paddingVertical: 10,
+                margin: 10,
+                borderRadius: 15,
+                color: "white",
+                borderLeftWidth: 2,
+                borderBottomWidth: 2,
+                borderColor: "rgba(27,38,44,1)",
+                backgroundColor: "rgba(27,38,44,1)",
+              },
+              isFocused && {
+                borderColor: "rgba(31,67,200,0.7)",
+              },
+            ]}
           />
           <TextInput
             placeholder="Şifre"
@@ -101,15 +113,26 @@ export default function Login({ navigation }) {
             }}
             secureTextEntry
             placeholderTextColor={"rgba(148,147,152,1)"}
-            style={{
-              width: "70%",
-              maxWidth: 550,
-              margin: 10,
-              padding: 15,
-              borderRadius: 15,
-              color: "white",
-              backgroundColor: "rgba(27,38,44,1)",
-            }}
+            onFocus={() => setIsFocused1(true)}
+            onBlur={() => setIsFocused1(false)}
+            style={[
+              {
+                width: "70%",
+                maxWidth: 550,
+                paddingHorizontal: 20,
+                paddingVertical: 10,
+                margin: 10,
+                borderRadius: 15,
+                borderLeftWidth: 2,
+                borderBottomWidth: 2,
+                borderColor: "rgba(27,38,44,1)",
+                color: "white",
+                backgroundColor: "rgba(27,38,44,1)",
+              },
+              isFocused1 && {
+                borderColor: "rgba(31,67,200,0.7)",
+              },
+            ]}
           />
           <View
             style={{
@@ -208,24 +231,6 @@ export default function Login({ navigation }) {
                 style={{ width: 25, height: 25 }}
               />
             </TouchableOpacity>
-
-            {/* //todo:facebook bağlantısı eklenirse kullanılabilir
-            <Pressable
-              style={{
-                padding: 10,
-                borderRadius: 20,
-                width: "34%",
-                height: 50,
-                justifyContent: "center",
-                alignItems: "center",
-                backgroundColor: "rgba(15,10,70,1)",
-              }}
-            >
-              <Image
-                source={require("../img/Facebook.png")}
-                style={{ width: 35, height: 35 }}
-              />
-            </Pressable> */}
           </View>
         </View>
       </ScrollView>
