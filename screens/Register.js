@@ -7,6 +7,7 @@ import {
   ScrollView,
   ActivityIndicator,
 } from "react-native";
+
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Hr from "react-native-hr-plus";
@@ -21,13 +22,7 @@ export default function Register({ navigation }) {
   const [isFocused, setIsFocused] = useState(false);
   const [isFocused1, setIsFocused1] = useState(false);
   const text = "Kayıt ediliyor...";
-  // const showtoast = () => {
-  //   ToastAndroid.show("başarılı", ToastAndroid.LONG);
-  // };
 
-  if (isLoading) {
-    return <Loading text={text} />;
-  }
   const SingUp = async () => {
     setIsLoading(true);
     try {
@@ -93,13 +88,16 @@ export default function Register({ navigation }) {
                 paddingVertical: 10,
                 margin: 10,
                 borderRadius: 15,
-                color: "white",
-                borderLeftWidth: 2,
-                borderBottomWidth: 2,
+                borderRightWidth: 1,
+                borderLeftWidth: 1,
+                borderTopWidth: 1,
+                borderBottomWidth: 7,
                 borderColor: "rgba(27,38,44,1)",
+                color: "white",
                 backgroundColor: "rgba(27,38,44,1)",
               },
               isFocused && {
+                borderBottomWidth: 7,
                 borderColor: "rgba(31,67,200,0.7)",
               },
             ]}
@@ -122,13 +120,16 @@ export default function Register({ navigation }) {
                 paddingVertical: 10,
                 margin: 10,
                 borderRadius: 15,
-                borderLeftWidth: 2,
-                borderBottomWidth: 2,
+                borderRightWidth: 1,
+                borderLeftWidth: 1,
+                borderTopWidth: 1,
+                borderBottomWidth: 7,
                 borderColor: "rgba(27,38,44,1)",
                 color: "white",
                 backgroundColor: "rgba(27,38,44,1)",
               },
               isFocused1 && {
+                borderBottomWidth: 7,
                 borderColor: "rgba(31,67,200,0.7)",
               },
             ]}
@@ -156,9 +157,19 @@ export default function Register({ navigation }) {
                 backgroundColor: "rgba(31,67,200,0.7)",
               }}
             >
-              <Text style={{ fontSize: 20, fontWeight: 500, color: "white" }}>
-                Kayıt
-              </Text>
+              {isLoading ? (
+                <View style={{}}>
+                  <ActivityIndicator
+                    animating={true}
+                    color={"rgba(31,200,200,1)"}
+                    size={30}
+                  />
+                </View>
+              ) : (
+                <Text style={{ fontSize: 20, fontWeight: 500, color: "white" }}>
+                  Kayıt
+                </Text>
+              )}
             </TouchableOpacity>
           </View>
           <View

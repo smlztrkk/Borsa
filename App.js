@@ -16,7 +16,9 @@ import { AntDesign, MaterialIcons } from "@expo/vector-icons";
 import { RootSiblingParent } from "react-native-root-siblings";
 import ForgotPassword from "./screens/ForgotPassword";
 import { auth } from "./Firebase";
-
+import { Feather } from "@expo/vector-icons";
+import { db } from "./Firebase";
+import { doc, getDoc } from "firebase/firestore";
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
@@ -108,6 +110,7 @@ function MainScreen({ route }) {
       <Tab.Screen
         name="Portfolio"
         component={Portfolio}
+        initialParams={{ userId: userId }}
         options={{
           tabBarIcon: ({ focused }) => (
             <View
@@ -117,8 +120,8 @@ function MainScreen({ route }) {
                 position: "absolute",
               }}
             >
-              <AntDesign
-                name="wallet"
+              <Feather
+                name="bookmark"
                 size={focused ? 32 : 24}
                 color={focused ? "aqua" : "rgb(29, 87, 159)"}
               />
@@ -159,11 +162,10 @@ export default function App() {
   useEffect(() => {
     auth.onAuthStateChanged((user) => {
       if (user) {
-        console.log(user);
         setUser(user);
-        setInitialRoute("MainScreen");
-      } else {
         setInitialRoute("Login");
+      } else {
+        setInitialRoute("MainScreen");
       }
     });
   }, []);
@@ -180,7 +182,10 @@ export default function App() {
               <Stack.Screen
                 name="MainScreen"
                 component={MainScreen}
-                initialParams={{ userId: user.uid, userEmail: user.email }}
+                initialParams={{
+                  userId: user.uid,
+                  userEmail: user.email,
+                }}
               />
             )}
             <Stack.Screen name="Login" component={Login} />

@@ -4,26 +4,48 @@ import {
   View,
   Image,
   TextInput,
-  ScrollView, //ToastAndroid,
+  ActivityIndicator,
+  ScrollView,
 } from "react-native";
-import React, { useState } from "react";
+import { db } from "../Firebase";
+import { setDoc, doc, getDoc } from "firebase/firestore";
+import React, { useState, useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Hr from "react-native-hr-plus";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { auth } from "../Firebase";
-import Loading from "../components/Loading";
 export default function Login({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-
   const [isFocused, setIsFocused] = useState(false);
   const [isFocused1, setIsFocused1] = useState(false);
-  const text = "Giriş yapılıyor...";
+  useEffect(() => {
+    fetchUserData();
+  }, []);
+  const fetchUserData = async () => {
+    setIsLoading(true);
+    try {
+      const docRef = doc(db, "users", "ZsoGUB26cuqmbKfym02t"); // Belge referansı
+      const docSnap = await getDoc(docRef);
+      const userData = docSnap.data();
+      if (userData.email !== "") {
+        await auth
+          .signInWithEmailAndPassword(userData.email, userData.password)
+          .then((userCredentials) => {
+            navigation.push("MainScreen");
+            setIsLoading(false);
+          });
+      } else {
+        console.log("giriş yapan kullanıcı yok");
+        setIsLoading(false);
+      }
+    } catch (error) {
+      console.error("Veri çekme hatası:", error);
+      setIsLoading(false);
+    }
+  };
 
-  if (isLoading) {
-    return <Loading text={text} />;
-  }
   const SingIn = async () => {
     setIsLoading(true);
     try {
@@ -31,6 +53,17 @@ export default function Login({ navigation }) {
         .signInWithEmailAndPassword(email, password)
         .then((userCredentials) => {
           const user = userCredentials.user;
+          try {
+            const userDocRef = doc(db, "users", "ZsoGUB26cuqmbKfym02t");
+            setDoc(userDocRef, {
+              uid: user.uid,
+              password: password,
+              email: email,
+            });
+            console.log("Kullanıcı bilgileri Firestore'a eklendi.");
+          } catch (firestoreError) {
+            console.error("Firestore'a veri yazma hatası:", firestoreError);
+          }
           navigation.push("MainScreen");
 
           setIsLoading(false);
@@ -94,13 +127,16 @@ export default function Login({ navigation }) {
                 paddingVertical: 10,
                 margin: 10,
                 borderRadius: 15,
-                color: "white",
-                borderLeftWidth: 2,
-                borderBottomWidth: 2,
+                borderRightWidth: 1,
+                borderLeftWidth: 1,
+                borderTopWidth: 1,
+                borderBottomWidth: 7,
                 borderColor: "rgba(27,38,44,1)",
+                color: "white",
                 backgroundColor: "rgba(27,38,44,1)",
               },
               isFocused && {
+                borderBottomWidth: 7,
                 borderColor: "rgba(31,67,200,0.7)",
               },
             ]}
@@ -123,13 +159,16 @@ export default function Login({ navigation }) {
                 paddingVertical: 10,
                 margin: 10,
                 borderRadius: 15,
-                borderLeftWidth: 2,
-                borderBottomWidth: 2,
+                borderRightWidth: 1,
+                borderLeftWidth: 1,
+                borderTopWidth: 1,
+                borderBottomWidth: 7,
                 borderColor: "rgba(27,38,44,1)",
                 color: "white",
                 backgroundColor: "rgba(27,38,44,1)",
               },
               isFocused1 && {
+                borderBottomWidth: 7,
                 borderColor: "rgba(31,67,200,0.7)",
               },
             ]}
@@ -175,16 +214,26 @@ export default function Login({ navigation }) {
                 width: "100%",
                 maxWidth: 550,
                 height: 50,
-                borderRadius: 20,
+                borderRadius: 15,
                 padding: 10,
                 justifyContent: "center",
                 alignItems: "center",
                 backgroundColor: "rgba(31,67,200,0.7)",
               }}
             >
-              <Text style={{ fontSize: 20, fontWeight: 500, color: "white" }}>
-                Giriş
-              </Text>
+              {isLoading ? (
+                <View style={{}}>
+                  <ActivityIndicator
+                    animating={true}
+                    color={"rgba(31,200,200,1)"}
+                    size={30}
+                  />
+                </View>
+              ) : (
+                <Text style={{ fontSize: 20, fontWeight: 500, color: "white" }}>
+                  Giriş
+                </Text>
+              )}
             </TouchableOpacity>
           </View>
           <View
@@ -219,7 +268,7 @@ export default function Login({ navigation }) {
             <TouchableOpacity
               style={{
                 height: 50,
-                borderRadius: 20,
+                borderRadius: 15,
                 padding: 10,
                 justifyContent: "center",
                 alignItems: "center",

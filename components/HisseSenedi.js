@@ -31,6 +31,7 @@ export default function HisseSenedi({ fdata }) {
                 flexDirection: "row",
                 alignItems: "center",
                 justifyContent: "space-around",
+                borderWidth: 1,
               }}
             >
               <View style={{ width: "40%" }}>

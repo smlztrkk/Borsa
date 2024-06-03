@@ -5,9 +5,9 @@ import {
   TextInput,
   Image,
   ScrollView,
-  ToastAndroid,
   ActivityIndicator,
 } from "react-native";
+
 import { Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -17,31 +17,8 @@ import { auth } from "../Firebase";
 export default function ForgotPassword({ navigation }) {
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
 
-  if (isLoading) {
-    return (
-      <SafeAreaView
-        style={{
-          flex: 1,
-          gap: 20,
-          justifyContent: "center",
-          alignItems: "center",
-          backgroundColor: "rgba(11,20,27,1)",
-        }}
-      >
-        <ActivityIndicator size={"large"} color={"rgba(255,255,255,0.8)"} />
-        <Text style={{ color: "rgba(255,255,255,0.5)" }}>
-          Eposta Gönderiliyor...
-        </Text>
-      </SafeAreaView>
-    );
-  }
-  const showtoast = () => {
-    ToastAndroid.show(
-      "Sıfırlama epostası başarılı bir şekilde gönderildi",
-      ToastAndroid.LONG
-    );
-  };
   const ResetPassword = async () => {
     setIsLoading(true);
     try {
@@ -50,6 +27,7 @@ export default function ForgotPassword({ navigation }) {
         navigation.push("Login");
       });
     } catch (error) {
+      setIsLoading(false);
       alert(error.message);
     }
   };
@@ -59,7 +37,7 @@ export default function ForgotPassword({ navigation }) {
         <View style={{ width: "70%", marginTop: 20, marginLeft: "10%" }}>
           <TouchableOpacity
             onPress={() => {
-              navigation.push("Login");
+              navigation.goBack();
             }}
           >
             <Ionicons
@@ -108,15 +86,30 @@ export default function ForgotPassword({ navigation }) {
             onChangeText={(text) => {
               setEmail(text);
             }}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
             placeholderTextColor={"rgba(148,147,152,1)"}
-            style={{
-              width: "70%",
-              padding: 15,
-              margin: 10,
-              borderRadius: 20,
-              color: "white",
-              backgroundColor: "rgba(27,38,44,1)",
-            }}
+            style={[
+              {
+                width: "70%",
+                maxWidth: 550,
+                paddingHorizontal: 20,
+                paddingVertical: 10,
+                margin: 10,
+                borderRadius: 15,
+                borderRightWidth: 1,
+                borderLeftWidth: 1,
+                borderTopWidth: 1,
+                borderBottomWidth: 7,
+                borderColor: "rgba(27,38,44,1)",
+                color: "white",
+                backgroundColor: "rgba(27,38,44,1)",
+              },
+              isFocused && {
+                borderBottomWidth: 7,
+                borderColor: "rgba(31,67,200,0.7)",
+              },
+            ]}
           />
         </View>
 
@@ -141,9 +134,19 @@ export default function ForgotPassword({ navigation }) {
                 backgroundColor: "rgba(31,67,200,0.7)",
               }}
             >
-              <Text style={{ fontSize: 20, fontWeight: 500, color: "white" }}>
-                Gönder
-              </Text>
+              {isLoading ? (
+                <View style={{}}>
+                  <ActivityIndicator
+                    animating={true}
+                    color={"rgba(31,200,200,1)"}
+                    size={30}
+                  />
+                </View>
+              ) : (
+                <Text style={{ fontSize: 20, fontWeight: 500, color: "white" }}>
+                  Gönder
+                </Text>
+              )}
             </TouchableOpacity>
           </View>
         </View>

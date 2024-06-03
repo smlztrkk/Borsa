@@ -1,5 +1,6 @@
-import { StyleSheet, Text, View, Modal, Pressable } from "react-native";
-import React, { useEffect, useState, useMemo } from "react";
+import { StyleSheet, Text, View, Pressable } from "react-native";
+import Modal from "react-native-modal";
+import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FlatList } from "react-native-gesture-handler";
 import { SegmentedButtons } from "react-native-paper";
@@ -23,7 +24,11 @@ export default function Search({ route }) {
   const [ara, setAra] = useState("");
   const [fdata, setFdata] = useState([]);
   const [ffdata, setFfdata] = useState([]);
-  const [modalVisible, setModalVisible] = useState(false);
+  const [isModalVisible, setModalVisible] = useState(false);
+
+  const toggleModal = () => {
+    setModalVisible(!isModalVisible);
+  };
   const [selectedId, setSelectedId] = useState(1);
   const [numColumns, setNumColumns] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
@@ -522,44 +527,46 @@ export default function Search({ route }) {
       ) : (
         <Loading text={text} />
       )}
-      {/* //todo expo ile de dene */}
+      {/* //!modalı özelleştir */}
       <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => {
-          setModalVisible(false);
+        isVisible={isModalVisible}
+        onSwipeComplete={toggleModal}
+        onBackdropPress={toggleModal}
+        swipeDirection="down"
+        style={{
+          alignItems: "center",
+          justifyContent: "flex-end",
+          margin: 0,
         }}
       >
-        <Pressable
-          style={{
-            flex: 1,
-            backgroundColor: "rgba(11,20,27,0.3)",
-          }}
-          onPress={() => setModalVisible(!modalVisible)}
-        ></Pressable>
         <View
           style={{
-            position: "absolute",
-            bottom: 0,
-            right: 0,
-            left: 0,
-            top: 400,
-            borderTopLeftRadius: 30,
-            borderTopRightRadius: 30,
-            backgroundColor: "rgba(27,38,44,0.8)",
+            backgroundColor: "rgba(27,38,44,1)",
+            borderRadius: 20,
+            height: 400,
+            width: "100%",
+            padding: 35,
             justifyContent: "center",
             alignItems: "center",
-            marginTop: 22,
+            shadowColor: "#000",
+            shadowOffset: {
+              width: 0,
+              height: 2,
+            },
+            shadowOpacity: 0.25,
+            shadowRadius: 4,
+            elevation: 5,
           }}
         >
           <View
             style={{
-              margin: 20,
-              backgroundColor: "rgba(27,38,44,1)",
+              backgroundColor: "gray",
+              position: "absolute",
+              top: 0,
               borderRadius: 20,
-              padding: 35,
-              alignItems: "center",
+              margin: 10,
+              height: 4,
+              width: 40,
               shadowColor: "#000",
               shadowOffset: {
                 width: 0,
@@ -569,34 +576,78 @@ export default function Search({ route }) {
               shadowRadius: 4,
               elevation: 5,
             }}
+          ></View>
+          <Text
+            style={{
+              marginBottom: 15,
+              textAlign: "center",
+            }}
           >
-            <Pressable
+            <Text
               style={{
-                borderRadius: 20,
-                padding: 10,
-                elevation: 2,
-                backgroundColor: "#2196F3",
+                color: "white",
+                fontWeight: "bold",
+                textAlign: "center",
               }}
-              onPress={() =>
-                selectedId == 1 ? HisseEkle(target) : DovizEkle(target2[0].Code)
-              }
             >
-              <Text style={styles.textStyle}>
-                {selectedId == 1 ? (
-                  target.length > 0 ? (
-                    <Text>{target[0].code}</Text>
-                  ) : (
-                    "yok"
-                  )
-                ) : target2.length > 0 ? (
-                  target2[0].Code
+              {selectedId == 1 ? (
+                target.length > 0 ? (
+                  <Text>{target[0].code} Hissesini izleme listesine ekle</Text>
                 ) : (
                   "yok"
-                )}
-              </Text>
-            </Pressable>
-          </View>
-          <View></View>
+                )
+              ) : target2.length > 0 ? (
+                <Text>{target2[0].Code} Dovizini izleme listesine ekle</Text>
+              ) : (
+                "yok"
+              )}
+            </Text>
+          </Text>
+          <Pressable
+            style={{
+              borderRadius: 20,
+              padding: 10,
+              elevation: 2,
+              backgroundColor: "#2196F3",
+            }}
+            onPress={() =>
+              selectedId == 1 ? HisseEkle(target) : DovizEkle(target2[0].Code)
+            }
+          >
+            <Text style={styles.textStyle}>
+              {selectedId == 1 ? (
+                target.length > 0 ? (
+                  <Text>{target[0].code}</Text>
+                ) : (
+                  "yok"
+                )
+              ) : target2.length > 0 ? (
+                target2[0].Code
+              ) : (
+                "yok"
+              )}
+            </Text>
+          </Pressable>
+
+          <Pressable
+            style={{
+              backgroundColor: "#2196F3",
+              padding: 10,
+              borderRadius: 20,
+              marginTop: 20,
+            }}
+            onPress={toggleModal}
+          >
+            <Text
+              style={{
+                color: "white",
+                fontWeight: "bold",
+                textAlign: "center",
+              }}
+            >
+              Gizle
+            </Text>
+          </Pressable>
         </View>
       </Modal>
     </SafeAreaView>

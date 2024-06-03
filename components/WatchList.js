@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, FlatList } from "react-native";
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import {
   doc,
   getDocs,
@@ -498,15 +498,15 @@ export default function WatchList({ userId }) {
                     style={{
                       flex: 1,
                       backgroundColor: "rgb(28,37,44)",
-                      borderRadius: 15,
-                      paddingHorizontal: 0,
-                      paddingVertical: 10,
-                      width: 170,
-                      height: 170,
+                      borderRadius: 20,
+                      paddingVertical: 20,
+                      paddingLeft: 20,
+                      paddingRight: 10,
                       marginVertical: 10,
-                      marginHorizontal: "27%",
-                      justifyContent: "center",
+                      marginHorizontal: 20,
+                      flexDirection: "row",
                       alignItems: "center",
+                      justifyContent: "space-around",
                       borderWidth: 1,
                       borderColor: (() => {
                         if (degisim > 0) return "rgba(0, 255, 0,0.5)";
@@ -518,84 +518,104 @@ export default function WatchList({ userId }) {
                     <View
                       style={{
                         flex: 1,
-                        justifyContent: "space-around",
+                        flexDirection: "row",
+                        justifyContent: "space-between",
                         alignItems: "center",
                       }}
                     >
-                      <Text
-                        style={{
-                          color: "white",
-                          fontSize: item.Tür == "Altın" ? 18 : 28,
-                          fontWeight: 900,
-                          marginBottom: 5,
-                          textAlign: "center",
-                        }}
-                      >
-                        {item.Code}
-                      </Text>
+                      <View style={{ width: "25%" }}>
+                        <Text
+                          style={{
+                            color: "white",
+                            fontSize: item.Tür == "Altın" ? 18 : 28,
+                            fontWeight: 900,
+                            marginBottom: 5,
+                            textAlign: "center",
+                          }}
+                        >
+                          {item.Code}
+                        </Text>
+                      </View>
                       <View
                         style={{
-                          width: 130,
-                          borderWidth: 1,
-                          borderColor: "rgb(39, 57, 79)",
-                        }}
-                      />
-                      <Text
-                        style={{
-                          color: "rgb(255, 1004, 129)",
-                          fontSize: 18,
-                          fontWeight: 400,
+                          width: "30%",
+                          justifyContent: "space-between",
+                          alignItems: "center",
                         }}
                       >
-                        Alış: {item.Alış}
-                      </Text>
-                      <Text
-                        style={{
-                          color: "rgb(33, 150, 243)",
-                          fontSize: 18,
-                          fontWeight: 400,
-                        }}
-                      >
-                        Satış: {item.Satış}
-                      </Text>
-                      <View
-                        style={{
-                          width: 130,
-                          borderWidth: 1,
-                          borderColor: "rgb(39, 57, 79)",
-                        }}
-                      />
-                      <Text
-                        style={{
-                          color: (() => {
-                            if (degisim > 0) return "rgb(0, 255, 0)";
-                            if (degisim === 0) return "rgb(125, 125, 125)";
-                            return "rgb(255, 0, 0)";
-                          })(),
-                          fontSize: 16,
-                          fontWeight: "300", // Font weight should be a string
-                        }}
-                      >
-                        Değişim: {item.Değişim.replace(/-|%/g, "")}
-                      </Text>
+                        <Text
+                          style={{
+                            color: "rgb(255, 1004, 129)",
+                            fontSize: 18,
+                            fontWeight: 400,
+                          }}
+                        >
+                          Alış: {item.Alış}
+                        </Text>
+                        <View
+                          style={{
+                            width: 100,
+                            borderWidth: 1,
+                            borderColor: "rgb(39, 57, 79)",
+                          }}
+                        />
+                        <Text
+                          style={{
+                            color: "rgb(33, 150, 243)",
+                            fontSize: 18,
+                            fontWeight: 400,
+                          }}
+                        >
+                          Satış: {item.Satış}
+                        </Text>
 
+                        <View
+                          style={{
+                            width: 100,
+                            borderWidth: 1,
+                            borderColor: "rgb(39, 57, 79)",
+                          }}
+                        />
+                        <Text
+                          style={{
+                            color: "orange",
+                            fontSize: 12,
+                            fontWeight: 700,
+                            textAlign: "center",
+                          }}
+                        >
+                          Tür: {item.Tür}
+                        </Text>
+                      </View>
                       <View
                         style={{
-                          width: 130,
-                          borderWidth: 1,
-                          borderColor: "rgb(39, 57, 79)",
-                        }}
-                      />
-                      <Text
-                        style={{
-                          color: "orange",
-                          fontSize: 12,
-                          fontWeight: 700,
-                          textAlign: "center",
+                          width: "35%",
+                          paddingVertical: 5,
+                          borderRadius: 10,
+                          justifyContent: "center",
+                          alignItems: "center",
+                          backgroundColor: (() => {
+                            if (degisim > 0) return "rgba(0, 255, 0,0.1)";
+                            if (degisim === 0) return "rgba(125, 125, 125,0.1)";
+                            return "rgba(255, 0, 0,0.1)";
+                          })(),
                         }}
                       >
-                        Tür: {item.Tür}
-                      </Text>
+                        <Text
+                          style={{
+                            textAlign: "center",
+                            color: (() => {
+                              if (degisim > 0) return "rgb(0, 255, 0)";
+                              if (degisim === 0) return "rgb(125, 125, 125)";
+                              return "rgb(255, 0, 0)";
+                            })(),
+                            fontSize: 32,
+                            fontWeight: 300, // Font weight should be a string
+                          }}
+                        >
+                          {item.Değişim.replace(/-/g, "")}
+                        </Text>
+                      </View>
                     </View>
                   </View>
                 </TouchableOpacity>

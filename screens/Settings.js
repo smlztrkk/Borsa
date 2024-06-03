@@ -5,14 +5,13 @@ import {
   Image,
   Modal,
   Pressable,
+  ActivityIndicator,
   FlatList,
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { auth } from "../Firebase";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import WatchList from "../components/WatchList";
-import Loading from "../components/Loading";
 import { db } from "../Firebase";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 
@@ -54,29 +53,27 @@ export default function Settings({ navigation, route }) {
     };
 
     fetchProfilFotoIndex();
-  }, [userId, secilenFotoIndex]); // Kullanıcı ID değiştiğinde tekrar çalışır
-
-  if (isLoading) {
-    return (
-      <SafeAreaView
-        style={{
-          flex: 1,
-          gap: 20,
-          justifyContent: "center",
-          alignItems: "center",
-          backgroundColor: "rgb(11,20,27)",
-        }}
-      >
-        <Loading text={"Çıkış Yapılıyor..."} />
-      </SafeAreaView>
-    );
-  }
+  }, [userId, secilenFotoIndex]);
 
   const SingOut = async () => {
     setIsLoading(true);
     try {
       await auth.signOut();
-      navigation.push("Login");
+      try {
+        const userDocRef = doc(db, "users", "ZsoGUB26cuqmbKfym02t");
+        setDoc(userDocRef, {
+          uid: "",
+          password: "",
+          email: "",
+        });
+        console.log("Kullanıcı bilgileri Firestore'a eklendi.");
+      } catch (firestoreError) {
+        console.error("Firestore'a veri yazma hatası:", firestoreError);
+      }
+      navigation.reset({
+        index: 0,
+        routes: [{ name: "Login" }],
+      });
       setIsLoading(false);
     } catch (error) {
       alert(error.message);
@@ -134,12 +131,23 @@ export default function Settings({ navigation, route }) {
     }
   };
 
+  const KullaniciSil = async () => {
+    const user = auth.currentUser;
+    try {
+      user.delete();
+      console.log("Hesap Silindi", "Hesabınız başarıyla silindi.");
+
+      navigation.navigate("Login");
+    } catch (error) {
+      console.error("Hesap silme hatası:", error);
+    }
+  };
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "rgb(11,20,27)" }}>
       <View
         style={{
           flex: 1,
-          justifyContent: "center",
+          paddingTop: 30,
           alignItems: "center",
           gap: 20,
         }}
@@ -192,16 +200,26 @@ export default function Settings({ navigation, route }) {
             style={{
               width: "100%",
               height: 50,
-              borderRadius: 20,
+              borderRadius: 15,
               padding: 10,
               justifyContent: "center",
               alignItems: "center",
               backgroundColor: "rgba(31,67,200,0.7)",
             }}
           >
-            <Text style={{ fontSize: 20, fontWeight: 500, color: "white" }}>
-              Çıkış Yap
-            </Text>
+            {isLoading ? (
+              <View style={{}}>
+                <ActivityIndicator
+                  animating={true}
+                  color={"rgba(31,200,200,1)"}
+                  size={30}
+                />
+              </View>
+            ) : (
+              <Text style={{ fontSize: 20, fontWeight: 500, color: "white" }}>
+                Çıkış Yap
+              </Text>
+            )}
           </TouchableOpacity>
         </View>
         <View style={{ width: "70%" }}>
@@ -210,7 +228,7 @@ export default function Settings({ navigation, route }) {
             style={{
               width: "100%",
               height: 50,
-              borderRadius: 20,
+              borderRadius: 15,
               padding: 10,
               justifyContent: "center",
               alignItems: "center",
@@ -222,16 +240,23 @@ export default function Settings({ navigation, route }) {
             </Text>
           </TouchableOpacity>
         </View>
-        <View
-          style={{
-            width: 400,
-            height: 500,
-            borderTopWidth: 0,
-            borderColor: "white",
-            borderRadius: 20,
-          }}
-        >
-          <WatchList userId={userId} />
+        <View style={{ width: "70%" }}>
+          <TouchableOpacity
+            onPress={() => KullaniciSil()}
+            style={{
+              width: "100%",
+              height: 50,
+              borderRadius: 15,
+              padding: 10,
+              justifyContent: "center",
+              alignItems: "center",
+              backgroundColor: "rgba(255,0,0,0.7)",
+            }}
+          >
+            <Text style={{ fontSize: 20, fontWeight: 500, color: "white" }}>
+              Hesabı Sil
+            </Text>
+          </TouchableOpacity>
         </View>
       </View>
       <Modal
