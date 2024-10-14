@@ -7,12 +7,13 @@ import {
   ScrollView,
   ActivityIndicator,
 } from "react-native";
+import Toast, { BaseToast, ErrorToast } from "react-native-toast-message";
 
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Hr from "react-native-hr-plus";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { auth } from "../Firebase";
+import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
 
 export default function Register({ navigation }) {
   const [email, setEmail] = useState("");
@@ -22,20 +23,88 @@ export default function Register({ navigation }) {
   const [isFocused, setIsFocused] = useState(false);
   const [isFocused1, setIsFocused1] = useState(false);
   const text = "Kayıt ediliyor...";
+  const toastConfig = {
+    success: (props) => (
+      <BaseToast
+        {...props}
+        style={{ borderLeftColor: "green", backgroundColor: "transparent" }}
+        contentContainerStyle={{ paddingHorizontal: 15 }}
+        text1Style={{
+          fontSize: 15,
+          color: "white",
+          fontWeight: "400",
+        }}
+      />
+    ),
 
-  const SingUp = async () => {
+    error: (props) => (
+      <ErrorToast
+        style={{
+          height: 50,
+          backgroundColor: "rgba(255, 50, 50,0.5)",
+          padding: 10,
+          borderLeftColor: "red",
+        }}
+        {...props}
+        text1Style={{
+          color: "white",
+          fontSize: 17,
+        }}
+        text2Style={{
+          fontSize: 15,
+        }}
+      />
+    ),
+
+    tomatoToast: ({ text1, props }) => (
+      <View
+        style={{
+          height: 40,
+          width: "100%",
+          backgroundColor: "rgb(100, 255, 100)",
+          padding: 10,
+        }}
+      >
+        <Text
+          style={{
+            color: "black",
+            fontSize: 15,
+            fontWeight: "bold",
+            textAlign: "center",
+          }}
+        >
+          {text1}
+        </Text>
+        {/* <Text>{props.uuid}</Text> */}
+      </View>
+    ),
+  };
+  //!kayıt olma işlemi
+  const googlSingUp = () => {
+    Toast.show({
+      type: "error",
+      text1: "Yakında eklenecek",
+      props: { uuid: "bba1a7d0-6ab2-4a0a-a76e-ebbe05ae6d70" },
+    });
+  };
+  const signUp = async () => {
     setIsLoading(true);
+
     try {
-      await auth
-        .createUserWithEmailAndPassword(email, password)
-        .then((userCredentials) => {
-          const user = userCredentials.user;
-          setIsLoading(false);
-          navigation.push("Login");
-        });
+      const auth = getAuth(); // Firebase Auth nesnesini al
+      const userCredentials = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+
+      // Kayıt başarılı olduğunda
+      setIsLoading(false);
+      console.log("Kayıt başarılı:", userCredentials.user); // Kullanıcı bilgilerini loglayabilirsiniz
+      navigation.push("Login");
     } catch (error) {
       setIsLoading(false);
-      alert(error.message);
+      alert(error.message); // Hata durumunda mesaj göster
     }
   };
   return (
@@ -146,7 +215,7 @@ export default function Register({ navigation }) {
         >
           <View style={{ width: "70%" }}>
             <TouchableOpacity
-              onPress={SingUp}
+              onPress={signUp}
               style={{
                 width: "100%",
                 height: 50,
@@ -161,7 +230,7 @@ export default function Register({ navigation }) {
                 <View style={{}}>
                   <ActivityIndicator
                     animating={true}
-                    color={"rgba(31,200,200,1)"}
+                    color={"white"}
                     size={30}
                   />
                 </View>
@@ -192,15 +261,39 @@ export default function Register({ navigation }) {
               </Text>
             </TouchableOpacity>
           </View>
-          <View style={{ width: "70%", marginVertical: 10 }}>
-            <Hr color="white" width={1}>
-              <Text style={{ color: "rgba(148,147,152,1)", margin: 15 }}>
-                VEYA
-              </Text>
-            </Hr>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "center",
+              alignItems: "center",
+              width: "70%",
+              marginVertical: 10,
+              gap: 10,
+            }}
+          >
+            <View
+              style={{
+                width: "35%",
+                height: 0,
+                borderWidth: 1,
+                borderColor: "rgb(39, 57, 79)",
+              }}
+            />
+            <Text style={{ color: "rgba(148,147,152,1)", margin: 15 }}>
+              VEYA
+            </Text>
+            <View
+              style={{
+                width: "35%",
+                height: 0,
+                borderWidth: 1,
+                borderColor: "rgb(39, 57, 79)",
+              }}
+            />
           </View>
           <View style={{ width: "70%", maxWidth: 550 }}>
             <TouchableOpacity
+              onPress={googlSingUp}
               style={{
                 height: 50,
                 borderRadius: 20,
@@ -218,6 +311,7 @@ export default function Register({ navigation }) {
           </View>
         </View>
       </ScrollView>
+      <Toast visibilityTime={3000} config={toastConfig} />
     </SafeAreaView>
   );
 }

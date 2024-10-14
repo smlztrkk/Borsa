@@ -84,8 +84,12 @@ export default function Doviz({ financeData }) {
                   alignItems: "center",
                   borderWidth: 1,
                   borderColor: (() => {
-                    if (degisim > 0) return "rgba(0, 255, 0,0.5)";
-                    if (degisim === 0) return "rgba(125, 125, 125,0.5)";
+                    if (degisim > 0) {
+                      return "rgba(0, 255, 0,0.5)";
+                    }
+                    if (degisim === 0) {
+                      return "rgba(125, 125, 125,0.5)";
+                    }
                     return "rgba(255, 0, 0,0.5)";
                   })(),
                 }}
@@ -143,15 +147,19 @@ export default function Doviz({ financeData }) {
                   <Text
                     style={{
                       color: (() => {
-                        if (degisim > 0) return "rgb(0, 255, 0)";
-                        if (degisim === 0) return "rgb(125, 125, 125)";
+                        if (degisim > 0) {
+                          return "rgb(0, 255, 0)";
+                        }
+                        if (degisim === 0) {
+                          return "rgb(125, 125, 125)";
+                        }
                         return "rgb(255, 0, 0)";
                       })(),
                       fontSize: 16,
                       fontWeight: "300", // Font weight should be a string
                     }}
                   >
-                    Değişim: {financeData[item]["Değişim"].replace(/-|%/g, "")}
+                    Değişim: {financeData[item]["Değişim"].replace(/-/g, "")}
                   </Text>
 
                   <View
@@ -192,8 +200,12 @@ export default function Doviz({ financeData }) {
                   alignItems: "center",
                   borderWidth: 1,
                   borderColor: (() => {
-                    if (degisim > 0) return "rgba(0, 255, 0,0.5)";
-                    if (degisim === 0) return "rgba(125, 125, 125,0.5)";
+                    if (degisim > 0) {
+                      return "rgba(0, 255, 0,0.5)";
+                    }
+                    if (degisim === 0) {
+                      return "rgba(125, 125, 125,0.5)";
+                    }
                     return "rgba(255, 0, 0,0.5)";
                   })(),
                 }}

@@ -9,20 +9,28 @@
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "rgb(11,20,27)"
+      "backgroundColor": "#0B141B"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "rgb(11,20,27)"
-      }
+        "backgroundColor": "#0B141B"
+      },
+      "package": "com.smlztrkk.Borsa"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "8180a1f6-7819-4db0-affa-b7ecec5e99bb"
+      }
     }
   }
 }

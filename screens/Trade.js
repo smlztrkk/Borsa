@@ -3,17 +3,20 @@ import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import axios from "axios";
 import { SelectList } from "react-native-dropdown-select-list";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialIcons, FontAwesome5 } from "@expo/vector-icons";
 import { TouchableOpacity } from "react-native-gesture-handler";
 
 export default function Trade() {
   const Api = "apikey 18bbvt4R0ZNSfXt6QNVbRt:6EL2kgzugiD4sy9XkE6rGc";
-  //const Api1 = "apikey 1KvoXE5NLfHkuNKbgMXmLR:6m5jUXdBXRnqSwnXxi4ycO";
+  const Api1 = "apikey 1KvoXE5NLfHkuNKbgMXmLR:6m5jUXdBXRnqSwnXxi4ycO";
   const Api2 = "apikey 3QFnPhlvL0Bc7W7c8imeDa:4X52g11L50nHGDA4jX1TZM";
   const [ilk, setIlk] = useState("TRY");
   const [ikinci, setIkinci] = useState("USD");
   const [miktar, setMiktar] = useState(1);
   const [sonuc, setSonuc] = useState(0);
+  const [deger, setDeger] = useState("");
+
+  //! burası parabirimlerini çevirmek için kullandığım api
 
   const fetchData = async () => {
     try {
@@ -22,11 +25,14 @@ export default function Trade() {
         {
           headers: {
             "content-type": "application/json",
-            authorization: `${Api2}`,
+            authorization: `${Api1}`,
           },
         }
       );
       setSonuc(response.data.result.data[0].calculatedstr);
+      setDeger(
+        Number(parseFloat(response.data.result.data[0].rate).toFixed(4))
+      );
     } catch (error) {
       console.error("(Trade) Error fetching data:", error);
     }
@@ -90,33 +96,39 @@ export default function Trade() {
   ];
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "rgb(11,20,27)" }}>
+    <SafeAreaView
+      style={{
+        flex: 1,
+        backgroundColor: "rgb(11,20,27)",
+      }}
+    >
       <ScrollView>
         <View
           style={{
             justifyContent: "center",
             alignItems: "center",
-            marginVertical: 40,
+            marginVertical: 170,
           }}
         >
           <Text
             style={{
-              color: "white",
+              color: "rgb(14,239,158)",
               fontSize: 32,
               fontWeight: 700,
             }}
           >
-            Döviz
+            Döviz Hesapla
           </Text>
         </View>
+
         <View
           style={{
             flexDirection: "row",
             justifyContent: "center",
-            gap: 5,
+            gap: 15,
             position: "absolute",
-            top: 100,
-            right: 25,
+            top: 300,
+            left: 26,
             zIndex: 2,
           }}
         >
@@ -129,8 +141,10 @@ export default function Trade() {
               inputStyles={{ color: "white" }}
               boxStyles={{
                 width: 150,
+                color: "white",
                 backgroundColor: "rgb(27,38,44)",
-                borderWidth: 0,
+                borderBottomWidth: 5,
+                borderColor: "rgba(31,67,200,0.7)",
               }}
               dropdownStyles={{
                 width: 150,
@@ -142,13 +156,26 @@ export default function Trade() {
               save="key"
             />
           </View>
-          <View>
-            <MaterialCommunityIcons
-              name="transit-connection-horizontal"
-              size={40}
-              color="rgb(60, 80, 100)"
-            />
-          </View>
+          <TouchableOpacity
+            onPress={() => {
+              setIkinci(ilk);
+              setIlk(ikinci);
+            }}
+          >
+            <View
+              style={{
+                marginTop: 7,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <FontAwesome5
+                name="exchange-alt"
+                size={30}
+                color="rgba(31,67,200,0.4)"
+              />
+            </View>
+          </TouchableOpacity>
           <View>
             <SelectList
               setSelected={(key) => setIkinci(key)}
@@ -159,7 +186,8 @@ export default function Trade() {
               boxStyles={{
                 width: 150,
                 backgroundColor: "rgb(27,38,44)",
-                borderWidth: 0,
+                borderBottomWidth: 5,
+                borderColor: "rgba(31,67,200,0.7)",
               }}
               dropdownStyles={{
                 width: 150,
@@ -174,94 +202,95 @@ export default function Trade() {
         </View>
         <View
           style={{
-            justifyContent: "center",
+            justifyContent: "",
+            marginLeft: 26,
             alignItems: "center",
             flexDirection: "row",
-            gap: 50,
+            gap: 60,
+            marginTop: 20,
           }}
         >
-          <TextInput
-            onChangeText={(num) => setMiktar(num)}
-            placeholder="Miktar..."
-            placeholderTextColor={"gray"}
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 5 }}>
+            <TextInput
+              onChangeText={(num) => setMiktar(num)}
+              placeholder="Miktar..."
+              placeholderTextColor={"gray"}
+              style={{
+                paddingStart: 10,
+                width: 150,
+                height: 40,
+                borderRadius: 10,
+                color: "white",
+                backgroundColor: "rgb(27,38,44)",
+              }}
+            />
+          </View>
+          <View>
+            <TouchableOpacity
+              onPress={fetchData}
+              style={{
+                width: 150,
+
+                borderRadius: 10,
+                justifyContent: "center",
+                alignItems: "center",
+                height: 40,
+                backgroundColor: "rgb(14,239,158)",
+              }}
+            >
+              <Text
+                style={{
+                  color: "rgb(27,38,44)",
+                  fontSize: 16,
+                  fontWeight: 500,
+                }}
+              >
+                Hesapla
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+        <View style={{ marginTop: 30, gap: 20 }}>
+          <View
             style={{
-              paddingStart: 10,
-              width: 100,
-              height: 40,
-              borderRadius: 10,
-              color: "white",
-              backgroundColor: "rgb(27,38,44)",
-              marginVertical: 50,
-            }}
-          />
-          <TouchableOpacity
-            onPress={fetchData}
-            style={{
-              width: 100,
-              borderRadius: 10,
               justifyContent: "center",
               alignItems: "center",
-              height: 40,
-              backgroundColor: "rgb(14,239,158)",
             }}
           >
             <Text
               style={{
-                color: "rgb(27,38,44)",
-                fontSize: 16,
-                fontWeight: 500,
+                color: "gray",
+                fontSize: 14,
+                fontWeight: 400,
               }}
             >
-              Hesapla
+              {deger ? "1 " + ilk + "  " : " "}
+              <MaterialIcons
+                name="compare-arrows"
+                size={12}
+                color={"rgb(29, 87, 159)"}
+              />
+              {deger ? "  " + deger + " " + ikinci : ""}
             </Text>
-          </TouchableOpacity>
-        </View>
-        <View style={{ justifyContent: "center", alignItems: "center" }}>
-          <Text style={{ color: "white", fontSize: 32, fontWeight: 500 }}>
-            {sonuc} {ikinci}
-          </Text>
-        </View>
-        <View
-          style={{
-            width: "100%",
-            borderWidth: 2,
-            borderColor: "rgb(27,38,44)",
-            marginVertical: 60,
-          }}
-        />
-        <View style={{ justifyContent: "center", alignItems: "center" }}>
-          <Text
+          </View>
+          <View
             style={{
-              color: "white",
-              fontSize: 32,
-              fontWeight: 700,
+              justifyContent: "center",
+              alignItems: "center",
             }}
           >
-            Hisse Senedi
-          </Text>
-        </View>
-        <View
-          style={{
-            justifyContent: "center",
-            alignItems: "center",
-            flexDirection: "row",
-            gap: 50,
-          }}
-        >
-          <TextInput
-            placeholder="Miktar..."
-            placeholderTextColor={"gray"}
-            style={{
-              paddingStart: 10,
-              width: 100,
-              height: 40,
-              borderRadius: 10,
-              color: "white",
-              backgroundColor: "rgb(27,38,44)",
-              marginVertical: 50,
-              marginBottom: 200,
-            }}
-          />
+            <Text
+              style={{
+                color: "white",
+                fontSize: 32,
+                fontWeight: 500,
+                borderBottomWidth: 1,
+                borderColor: "red",
+              }}
+            >
+              {sonuc} {ikinci}
+            </Text>
+          </View>
         </View>
       </ScrollView>
     </SafeAreaView>

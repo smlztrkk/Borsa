@@ -11,70 +11,160 @@ import { db } from "../Firebase";
 import { setDoc, doc, getDoc } from "firebase/firestore";
 import React, { useState, useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Hr from "react-native-hr-plus";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { auth } from "../Firebase";
+import Loading from "../components/Loading";
+import Toast, { BaseToast, ErrorToast } from "react-native-toast-message";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 export default function Login({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoading1, setIsLoading1] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const [isFocused1, setIsFocused1] = useState(false);
+
+  const toastConfig = {
+    success: (props) => (
+      <BaseToast
+        {...props}
+        style={{ borderLeftColor: "green", backgroundColor: "transparent" }}
+        contentContainerStyle={{ paddingHorizontal: 15 }}
+        text1Style={{
+          fontSize: 15,
+          color: "white",
+          fontWeight: "400",
+        }}
+      />
+    ),
+
+    error: (props) => (
+      <ErrorToast
+        style={{
+          height: 50,
+          backgroundColor: "rgba(255, 50, 50,0.5)",
+          padding: 10,
+          borderLeftColor: "red",
+        }}
+        {...props}
+        text1Style={{
+          color: "white",
+          fontSize: 17,
+        }}
+        text2Style={{
+          fontSize: 15,
+        }}
+      />
+    ),
+
+    tomatoToast: ({ text1, props }) => (
+      <View
+        style={{
+          height: 40,
+          width: "100%",
+          backgroundColor: "rgb(100, 255, 100)",
+          padding: 10,
+        }}
+      >
+        <Text
+          style={{
+            color: "black",
+            fontSize: 15,
+            fontWeight: "bold",
+            textAlign: "center",
+          }}
+        >
+          {text1}
+        </Text>
+        {/* <Text>{props.uuid}</Text> */}
+      </View>
+    ),
+  };
+  const googlSingUp = () => {
+    Toast.show({
+      type: "error",
+      text1: "Yakında eklenecek",
+      props: { uuid: "bba1a7d0-6ab2-4a0a-a76e-ebbe05ae6d70" },
+    });
+  };
+
   useEffect(() => {
     fetchUserData();
   }, []);
+
+  //!giriş yapılmış kullanıcıyı kontrol etme ve otomatik giriş
+
   const fetchUserData = async () => {
-    setIsLoading(true);
+    setIsLoading1(true);
     try {
       const docRef = doc(db, "users", "ZsoGUB26cuqmbKfym02t"); // Belge referansı
       const docSnap = await getDoc(docRef);
-      const userData = docSnap.data();
-      if (userData.email !== "") {
-        await auth
-          .signInWithEmailAndPassword(userData.email, userData.password)
-          .then((userCredentials) => {
-            navigation.push("MainScreen");
-            setIsLoading(false);
-          });
+
+      if (docSnap.exists()) {
+        const userData = docSnap.data();
+
+        // Eğer email varsa ve boş değilse giriş yap
+        if (userData.email && userData.password) {
+          const auth = getAuth(); // Firebase Auth nesnesini al
+          await signInWithEmailAndPassword(
+            auth,
+            userData.email,
+            userData.password
+          );
+
+          navigation.push("MainScreen");
+        } else {
+          console.log("Giriş yapacak kullanıcı bilgisi yok.");
+        }
       } else {
-        console.log("giriş yapan kullanıcı yok");
-        setIsLoading(false);
+        console.log("Belge bulunamadı.");
       }
     } catch (error) {
       console.error("Veri çekme hatası:", error);
-      setIsLoading(false);
+    } finally {
+      setIsLoading1(false); // Yüklenme durumunu sonlandır
     }
   };
 
-  const SingIn = async () => {
+  //!giriş yapma işlemi
+
+  const signIn = async () => {
     setIsLoading(true);
-    try {
-      await auth
-        .signInWithEmailAndPassword(email, password)
-        .then((userCredentials) => {
-          const user = userCredentials.user;
-          try {
-            const userDocRef = doc(db, "users", "ZsoGUB26cuqmbKfym02t");
-            setDoc(userDocRef, {
-              uid: user.uid,
-              password: password,
-              email: email,
-            });
-            console.log("Kullanıcı bilgileri Firestore'a eklendi.");
-          } catch (firestoreError) {
-            console.error("Firestore'a veri yazma hatası:", firestoreError);
-          }
-          navigation.push("MainScreen");
 
-          setIsLoading(false);
+    try {
+      // Firebase Auth ile giriş yapılıyor
+      const userCredentials = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+
+      // Firestore'a kullanıcı bilgilerini kaydetme
+      try {
+        const userDocRef = doc(db, "users", userCredentials.user.uid); // UID ile belge oluşturma
+        await setDoc(userDocRef, {
+          password: password,
+          email: email,
+          // Şifreyi burada saklamayın, güvenlik riski oluşturabilir
         });
+        console.log("Kullanıcı bilgileri Firestore'a eklendi.");
+      } catch (firestoreError) {
+        console.error("Firestore'a veri yazma hatası:", firestoreError);
+      }
+
+      // Giriş başarılı olursa yönlendirme
+      navigation.push("MainScreen");
     } catch (error) {
-      setIsLoading(false);
+      console.error("Giriş hatası:", error.message);
       alert(error.message);
+    } finally {
+      setIsLoading(false); // Yüklenme durumu sona erer
     }
   };
 
-  return (
+  return isLoading1 ? (
+    <Loading text={"Bekleyiniz..."} />
+  ) : (
     <SafeAreaView style={styles.mainview}>
       <ScrollView>
         <View
@@ -209,7 +299,7 @@ export default function Login({ navigation }) {
             }}
           >
             <TouchableOpacity
-              onPress={SingIn}
+              onPress={() => signIn()}
               style={{
                 width: "100%",
                 maxWidth: 550,
@@ -225,7 +315,7 @@ export default function Login({ navigation }) {
                 <View style={{}}>
                   <ActivityIndicator
                     animating={true}
-                    color={"rgba(31,200,200,1)"}
+                    color={"white"}
                     size={30}
                   />
                 </View>
@@ -259,13 +349,39 @@ export default function Login({ navigation }) {
               </Text>
             </TouchableOpacity>
           </View>
-          <View style={{ width: "70%", maxWidth: 550, marginVertical: 10 }}>
-            <Hr color="rgba(148,147,152,1)" width={2}>
-              <Text style={{ color: "white", margin: 15 }}>VEYA</Text>
-            </Hr>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "center",
+              alignItems: "center",
+              width: "70%",
+              marginVertical: 10,
+              gap: 10,
+            }}
+          >
+            <View
+              style={{
+                width: "35%",
+                height: 0,
+                borderWidth: 1,
+                borderColor: "rgb(39, 57, 79)",
+              }}
+            />
+            <Text style={{ color: "rgba(148,147,152,1)", margin: 15 }}>
+              VEYA
+            </Text>
+            <View
+              style={{
+                width: "35%",
+                height: 0,
+                borderWidth: 1,
+                borderColor: "rgb(39, 57, 79)",
+              }}
+            />
           </View>
           <View style={{ width: "70%", maxWidth: 550 }}>
             <TouchableOpacity
+              onPress={() => googlSingUp()}
               style={{
                 height: 50,
                 borderRadius: 15,
@@ -283,6 +399,7 @@ export default function Login({ navigation }) {
           </View>
         </View>
       </ScrollView>
+      <Toast visibilityTime={3000} config={toastConfig} />
     </SafeAreaView>
   );
 }

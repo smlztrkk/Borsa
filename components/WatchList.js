@@ -6,8 +6,6 @@ import {
   updateDoc,
   collection,
   getDoc,
-  query,
-  where,
 } from "firebase/firestore";
 import { SegmentedButtons } from "react-native-paper";
 import { db } from "../Firebase";
@@ -22,6 +20,8 @@ export default function WatchList({ userId }) {
   const [fdata, setFdata] = useState([]);
   const [selectedId, setSelectedId] = useState(1);
   const [numColumns, setNumColumns] = useState(1);
+
+  //!hisse senedi verilerini axios ile aldığım api
 
   const getHisse = async () => {
     setIsLoading(true);
@@ -47,6 +47,9 @@ export default function WatchList({ userId }) {
       console.error("Veri alma hatası 1:", error);
     }
   };
+
+  //!döviz verilerini axios ile aldığım api
+
   const getDoviz = async () => {
     setIsLoading(true);
     try {
@@ -65,7 +68,8 @@ export default function WatchList({ userId }) {
   const [target2, setTarget2] = useState([]);
   const [target, setTarget] = useState([]);
 
-  //! çözüldü
+  //? hisse ve döviz verilerini alıp değişkenlere atamak
+
   const getData = async (userId) => {
     if (!userId) {
       console.error("Geçersiz userId:", userId);
@@ -85,7 +89,7 @@ export default function WatchList({ userId }) {
         console.log("Döküman bulunamadı!");
       }
 
-      console.log("querySnapshot:", docSnap); // querySnapshot'ı kontrol edin
+      console.log("querySnapshot:", docSnap);
 
       if (docSnap.empty) {
         console.error("Boş querySnapshot");
@@ -101,49 +105,43 @@ export default function WatchList({ userId }) {
         setIsLoading(false);
         return;
       }
-      if (selectedId == 1) {
-        if (Array.isArray(newData.Hisse)) {
-          setWatch(newData.Hisse);
-          setTarget([]);
-          const watchSet = new Set(newData.Hisse.map((item) => item));
-          console.log("watchSet:", watchSet);
+      if (selectedId == 1 && Array.isArray(newData.Hisse)) {
+        setWatch(newData.Hisse);
+        setTarget([]);
+        const watchSet = new Set(newData.Hisse.map((item) => item));
+        console.log("watchSet:", watchSet);
 
-          const newItems = fdata.filter((item) => watchSet.has(item.code));
-          console.log("newItems h:", newItems);
+        const newItems = fdata.filter((item) => watchSet.has(item.code));
+        console.log("newItems h:", newItems);
 
-          setTarget((prevTarget) => {
-            const prevCodesSet = new Set(prevTarget.map((item) => item.code));
-            const itemsToAdd = newItems.filter(
-              (item) => !prevCodesSet.has(item.code)
-            );
-            return [...prevTarget, ...itemsToAdd];
-          });
-        } else {
-          console.error("Hisse verisi geçersiz veya mevcut değil");
-        }
-      } else {
-        if (Array.isArray(newData.Doviz)) {
-          setWatch2(newData.Doviz);
-          setTarget2([]);
-          const watchSet = newData.Doviz.map((item) => item);
-          console.log("watchSet:", watchSet);
-
-          const financeDataaa = data.financeArray;
-          const newItems = financeDataaa.filter((item) =>
-            watchSet.includes(item.Code)
+        setTarget((prevTarget) => {
+          const prevCodesSet = new Set(prevTarget.map((item) => item.code));
+          const itemsToAdd = newItems.filter(
+            (item) => !prevCodesSet.has(item.code)
           );
-          console.log("newItems d:", newItems);
+          return [...prevTarget, ...itemsToAdd];
+        });
+      } else if (Array.isArray(newData.Doviz)) {
+        setWatch2(newData.Doviz);
+        setTarget2([]);
+        const watchSet = newData.Doviz.map((item) => item);
+        console.log("watchSet:", watchSet);
 
-          setTarget2((prevTarget) => {
-            const prevCodesSet = new Set(prevTarget.map((item) => item.code));
-            const itemsToAdd = newItems.filter(
-              (item) => !prevCodesSet.has(item.code)
-            );
-            return [...prevTarget, ...itemsToAdd];
-          });
-        } else {
-          console.error("Doviz verisi geçersiz veya mevcut değil");
-        }
+        const financeDataaa = data.financeArray;
+        const newItems = financeDataaa.filter((item) =>
+          watchSet.includes(item.Code)
+        );
+        console.log("newItems d:", newItems);
+
+        setTarget2((prevTarget) => {
+          const prevCodesSet = new Set(prevTarget.map((item) => item.code));
+          const itemsToAdd = newItems.filter(
+            (item) => !prevCodesSet.has(item.code)
+          );
+          return [...prevTarget, ...itemsToAdd];
+        });
+      } else {
+        console.error("Doviz verisi geçersiz veya mevcut değil");
       }
 
       setIsLoading(false);
@@ -153,7 +151,7 @@ export default function WatchList({ userId }) {
     }
   };
 
-  //todo------------------
+  //! hisse sil
 
   const HisseSil = async (target, userId) => {
     setIsLoading(true);
@@ -251,9 +249,9 @@ export default function WatchList({ userId }) {
     }
   };
 
-  useEffect(() => {
-    // Bir saniyede bir fonksiyonları çağıracak setInterval fonksiyonu oluşturun
+  //!seçili olan tarafın yenilenmesi
 
+  useEffect(() => {
     getData(userId);
     if (selectedId === 1) {
       getHisse();
@@ -265,7 +263,7 @@ export default function WatchList({ userId }) {
   //todo güncelleneblmesi için burada kod değerlerini tut ve bu kod değerleri ile eşleşenleri
   //todo ana firestore databaseinden çek ve güncelleme işlemini button ile sağla
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, paddingBottom: 75 }}>
       <View
         style={{
           alignItems: "center",
@@ -281,16 +279,17 @@ export default function WatchList({ userId }) {
           style={{
             alignItems: "center",
             justifyContent: "center",
-            backgroundColor: "rgb(14,239,158)",
-            borderRadius: 20,
-            width: 150,
-            height: 30,
+            borderBottomWidth: 1,
+            borderColor: "rgb(14,239,158)",
+            borderRadius: 0,
+            width: 200,
+            height: 40,
           }}
         >
           <Text
             style={{
-              color: "rgb(28,37,44)",
-              fontSize: 15,
+              color: "rgb(14,239,158)",
+              fontSize: 18,
               fontWeight: 500,
               textAlign: "center",
             }}
@@ -326,305 +325,315 @@ export default function WatchList({ userId }) {
             },
           ]}
           density="regular"
-          style={{ width: 300, marginVertical: 15 }}
+          style={{ width: 300, marginVertical: 15, borderWidth: 0 }}
         />
       </View>
 
-      {!isLoading ? (
-        selectedId == 1 ? ( //??? bunu tutmamın sebebi button ile ilme işlemini yapmak için ayrı bir flatlist olsun
-          <FlatList
-            style={{}}
-            data={target}
-            keyExtractor={(item, index) => index.toString()} // keyExtractor düzeltildi
-            numColumns={1}
-            renderItem={({ item, index }) => {
-              return (
-                <TouchableOpacity onLongPress={() => HisseSil(item, userId)}>
+      {isLoading ? (
+        <Loading text={"yükleniyor..."} />
+      ) : selectedId == 1 ? (
+        <FlatList
+          style={{}}
+          data={target}
+          keyExtractor={(item, index) => index.toString()} // keyExtractor düzeltildi
+          numColumns={1}
+          renderItem={({ item, index }) => {
+            return (
+              <TouchableOpacity onLongPress={() => HisseSil(item, userId)}>
+                <View
+                  style={{
+                    flex: 1,
+                    backgroundColor: "rgb(28,37,44)",
+                    borderRadius: 20,
+                    paddingVertical: 20,
+                    paddingLeft: 20,
+                    paddingRight: 10,
+                    marginVertical: 10,
+                    marginHorizontal: 20,
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "space-around",
+                  }}
+                >
+                  <View style={{ width: "35%" }}>
+                    <Text
+                      style={{
+                        color: "rgb(239, 108, 0)",
+                        fontSize: 24,
+                        fontWeight: 700,
+                        marginBottom: 0,
+                      }}
+                    >
+                      {item.code}
+                    </Text>
+                    <Text
+                      style={{
+                        color: "rgb(33, 150, 243)",
+                        fontSize: 12,
+                        fontWeight: 700,
+                      }}
+                    >
+                      {item.time}
+                    </Text>
+                  </View>
                   <View
                     style={{
-                      flex: 1,
-                      backgroundColor: "rgb(28,37,44)",
-                      borderRadius: 20,
-                      paddingVertical: 20,
-                      paddingLeft: 20,
-                      paddingRight: 10,
-                      marginVertical: 10,
-                      marginHorizontal: 20,
-                      flexDirection: "row",
-                      alignItems: "center",
-                      justifyContent: "space-around",
+                      width: "30%",
                     }}
                   >
-                    <View style={{ width: "35%" }}>
+                    <View
+                      style={{
+                        flexDirection: "column",
+                        justifyContent: "space-between",
+                      }}
+                    >
                       <Text
                         style={{
-                          color: "rgb(239, 108, 0)",
-                          fontSize: 24,
-                          fontWeight: 700,
-                          marginBottom: 0,
+                          color: "rgb(255, 1004, 129)",
+                          fontSize: 14,
+                          fontWeight: 500,
                         }}
                       >
-                        {item.code}
+                        Fiyat: {item.lastpricestr}
                       </Text>
                       <Text
                         style={{
-                          color: "rgb(33, 150, 243)",
+                          color: "rgb(144, 164, 174)",
                           fontSize: 12,
                           fontWeight: 700,
                         }}
                       >
-                        {item.time}
+                        Min: {item.minstr}
+                      </Text>
+                      <Text
+                        style={{
+                          color: "rgb(144, 164, 174)",
+                          fontSize: 12,
+                          fontWeight: 700,
+                        }}
+                      >
+                        Max: {item.maxstr}
+                      </Text>
+                    </View>
+                  </View>
+                  <View
+                    style={{
+                      width: "35%",
+                      paddingLeft: 10,
+                      paddingVertical: 5,
+                      borderRadius: 10,
+                      backgroundColor:
+                        item.rate > 0
+                          ? "rgba(0, 255, 0,0.1)"
+                          : item.rate == 0
+                          ? "rgba(125, 125, 125,0.1)"
+                          : "rgba(255, 0, 0,0.1)",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Text
+                        style={{
+                          color:
+                            item.rate > 0
+                              ? "rgb(0, 255, 0)"
+                              : item.rate == 0
+                              ? "rgb(125, 125, 125)"
+                              : "rgb(255, 0, 0)",
+                          fontSize: 32,
+                          fontWeight: 300,
+                        }}
+                      >
+                        {"%" + Math.abs(item.rate)}
+                      </Text>
+                      <Text>
+                        {item.rate > 0 ? (
+                          <MaterialIcons
+                            name="arrow-drop-up"
+                            size={28}
+                            color="rgb(0, 255, 0)"
+                          />
+                        ) : item.rate == 0 ? (
+                          <MaterialIcons
+                            name="arrow-left"
+                            size={28}
+                            color="rgb(125, 125, 125)"
+                          />
+                        ) : (
+                          <MaterialIcons
+                            name="arrow-drop-down"
+                            size={28}
+                            color="rgb(255, 0, 0)"
+                          />
+                        )}
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+              </TouchableOpacity>
+            );
+          }}
+        />
+      ) : (
+        <FlatList
+          style={{}}
+          data={target2}
+          keyExtractor={(item, index) => index.toString()} // keyExtractor düzeltildi
+          numColumns={numColumns}
+          renderItem={({ item, index }) => {
+            const degisimStr = item.Değişim;
+            const degisim = degisimStr
+              ? parseFloat(degisimStr.replace(/,/g, ".").replace(/%/g, ""))
+              : null;
+            return (
+              <TouchableOpacity onLongPress={() => DovizSil(item, userId)}>
+                <View
+                  style={{
+                    flex: 1,
+                    backgroundColor: "rgb(28,37,44)",
+                    borderRadius: 20,
+                    paddingVertical: 20,
+                    paddingLeft: 20,
+                    paddingRight: 10,
+                    marginVertical: 10,
+                    marginHorizontal: 20,
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "space-around",
+                    borderWidth: 1,
+                    borderColor: (() => {
+                      if (degisim > 0) {
+                        return "rgba(0, 255, 0,0.5)";
+                      }
+                      if (degisim === 0) {
+                        return "rgba(125, 125, 125,0.5)";
+                      }
+                      return "rgba(255, 0, 0,0.5)";
+                    })(),
+                  }}
+                >
+                  <View
+                    style={{
+                      flex: 1,
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
+                    <View style={{ width: "25%" }}>
+                      <Text
+                        style={{
+                          color: "white",
+                          fontSize: item.Tür == "Altın" ? 18 : 28,
+                          fontWeight: 900,
+                          marginBottom: 5,
+                          textAlign: "center",
+                        }}
+                      >
+                        {item.Code}
                       </Text>
                     </View>
                     <View
                       style={{
                         width: "30%",
-                      }}
-                    >
-                      <View
-                        style={{
-                          flexDirection: "column",
-                          justifyContent: "space-between",
-                        }}
-                      >
-                        <Text
-                          style={{
-                            color: "rgb(255, 1004, 129)",
-                            fontSize: 14,
-                            fontWeight: 500,
-                          }}
-                        >
-                          Fiyat: {item.lastpricestr}
-                        </Text>
-                        <Text
-                          style={{
-                            color: "rgb(144, 164, 174)",
-                            fontSize: 12,
-                            fontWeight: 700,
-                          }}
-                        >
-                          Min: {item.minstr}
-                        </Text>
-                        <Text
-                          style={{
-                            color: "rgb(144, 164, 174)",
-                            fontSize: 12,
-                            fontWeight: 700,
-                          }}
-                        >
-                          Max: {item.maxstr}
-                        </Text>
-                      </View>
-                    </View>
-                    <View
-                      style={{
-                        width: "35%",
-                        paddingLeft: 10,
-                        paddingVertical: 5,
-                        borderRadius: 10,
-                        backgroundColor:
-                          item.rate > 0
-                            ? "rgba(0, 255, 0,0.1)"
-                            : item.rate == 0
-                            ? "rgba(125, 125, 125,0.1)"
-                            : "rgba(255, 0, 0,0.1)",
-                        justifyContent: "center",
-                        alignItems: "center",
-                      }}
-                    >
-                      <View
-                        style={{
-                          flexDirection: "row",
-                          justifyContent: "center",
-                          alignItems: "center",
-                        }}
-                      >
-                        <Text
-                          style={{
-                            color:
-                              item.rate > 0
-                                ? "rgb(0, 255, 0)"
-                                : item.rate == 0
-                                ? "rgb(125, 125, 125)"
-                                : "rgb(255, 0, 0)",
-                            fontSize: 32,
-                            fontWeight: 300,
-                          }}
-                        >
-                          {"%" + Math.abs(item.rate)}
-                        </Text>
-                        <Text>
-                          {item.rate > 0 ? (
-                            <MaterialIcons
-                              name="arrow-drop-up"
-                              size={28}
-                              color="rgb(0, 255, 0)"
-                            />
-                          ) : item.rate == 0 ? (
-                            <MaterialIcons
-                              name="arrow-left"
-                              size={28}
-                              color="rgb(125, 125, 125)"
-                            />
-                          ) : (
-                            <MaterialIcons
-                              name="arrow-drop-down"
-                              size={28}
-                              color="rgb(255, 0, 0)"
-                            />
-                          )}
-                        </Text>
-                      </View>
-                    </View>
-                  </View>
-                </TouchableOpacity>
-              );
-            }}
-          />
-        ) : (
-          <FlatList
-            style={{}}
-            data={target2}
-            keyExtractor={(item, index) => index.toString()} // keyExtractor düzeltildi
-            numColumns={numColumns}
-            renderItem={({ item, index }) => {
-              const degisimStr = item.Değişim;
-              const degisim = degisimStr
-                ? parseFloat(degisimStr.replace(/,/g, ".").replace(/%/g, ""))
-                : null;
-              return (
-                <TouchableOpacity onLongPress={() => DovizSil(item, userId)}>
-                  <View
-                    style={{
-                      flex: 1,
-                      backgroundColor: "rgb(28,37,44)",
-                      borderRadius: 20,
-                      paddingVertical: 20,
-                      paddingLeft: 20,
-                      paddingRight: 10,
-                      marginVertical: 10,
-                      marginHorizontal: 20,
-                      flexDirection: "row",
-                      alignItems: "center",
-                      justifyContent: "space-around",
-                      borderWidth: 1,
-                      borderColor: (() => {
-                        if (degisim > 0) return "rgba(0, 255, 0,0.5)";
-                        if (degisim === 0) return "rgba(125, 125, 125,0.5)";
-                        return "rgba(255, 0, 0,0.5)";
-                      })(),
-                    }}
-                  >
-                    <View
-                      style={{
-                        flex: 1,
-                        flexDirection: "row",
                         justifyContent: "space-between",
                         alignItems: "center",
                       }}
                     >
-                      <View style={{ width: "25%" }}>
-                        <Text
-                          style={{
-                            color: "white",
-                            fontSize: item.Tür == "Altın" ? 18 : 28,
-                            fontWeight: 900,
-                            marginBottom: 5,
-                            textAlign: "center",
-                          }}
-                        >
-                          {item.Code}
-                        </Text>
-                      </View>
-                      <View
+                      <Text
                         style={{
-                          width: "30%",
-                          justifyContent: "space-between",
-                          alignItems: "center",
+                          color: "rgb(255, 1004, 129)",
+                          fontSize: 14,
+                          fontWeight: 400,
                         }}
                       >
-                        <Text
-                          style={{
-                            color: "rgb(255, 1004, 129)",
-                            fontSize: 18,
-                            fontWeight: 400,
-                          }}
-                        >
-                          Alış: {item.Alış}
-                        </Text>
-                        <View
-                          style={{
-                            width: 100,
-                            borderWidth: 1,
-                            borderColor: "rgb(39, 57, 79)",
-                          }}
-                        />
-                        <Text
-                          style={{
-                            color: "rgb(33, 150, 243)",
-                            fontSize: 18,
-                            fontWeight: 400,
-                          }}
-                        >
-                          Satış: {item.Satış}
-                        </Text>
+                        Alış: {item.Alış}
+                      </Text>
+                      <View
+                        style={{
+                          width: 100,
+                          borderWidth: 1,
+                          borderColor: "rgb(39, 57, 79)",
+                        }}
+                      />
+                      <Text
+                        style={{
+                          color: "rgb(33, 150, 243)",
+                          fontSize: 14,
+                          fontWeight: 400,
+                        }}
+                      >
+                        Satış: {item.Satış}
+                      </Text>
 
-                        <View
-                          style={{
-                            width: 100,
-                            borderWidth: 1,
-                            borderColor: "rgb(39, 57, 79)",
-                          }}
-                        />
-                        <Text
-                          style={{
-                            color: "orange",
-                            fontSize: 12,
-                            fontWeight: 700,
-                            textAlign: "center",
-                          }}
-                        >
-                          Tür: {item.Tür}
-                        </Text>
-                      </View>
                       <View
                         style={{
-                          width: "35%",
-                          paddingVertical: 5,
-                          borderRadius: 10,
-                          justifyContent: "center",
-                          alignItems: "center",
-                          backgroundColor: (() => {
-                            if (degisim > 0) return "rgba(0, 255, 0,0.1)";
-                            if (degisim === 0) return "rgba(125, 125, 125,0.1)";
-                            return "rgba(255, 0, 0,0.1)";
-                          })(),
+                          width: 100,
+                          borderWidth: 1,
+                          borderColor: "rgb(39, 57, 79)",
+                        }}
+                      />
+                      <Text
+                        style={{
+                          color: "orange",
+                          fontSize: 12,
+                          fontWeight: 700,
+                          textAlign: "center",
                         }}
                       >
-                        <Text
-                          style={{
-                            textAlign: "center",
-                            color: (() => {
-                              if (degisim > 0) return "rgb(0, 255, 0)";
-                              if (degisim === 0) return "rgb(125, 125, 125)";
-                              return "rgb(255, 0, 0)";
-                            })(),
-                            fontSize: 32,
-                            fontWeight: 300, // Font weight should be a string
-                          }}
-                        >
-                          {item.Değişim.replace(/-/g, "")}
-                        </Text>
-                      </View>
+                        Tür: {item.Tür}
+                      </Text>
+                    </View>
+                    <View
+                      style={{
+                        width: "30%",
+                        paddingVertical: 5,
+                        borderRadius: 10,
+                        justifyContent: "center",
+                        alignItems: "center",
+                        backgroundColor: (() => {
+                          if (degisim > 0) {
+                            return "rgba(0, 255, 0,0.1)";
+                          }
+                          if (degisim === 0) {
+                            return "rgba(125, 125, 125,0.1)";
+                          }
+                          return "rgba(255, 0, 0,0.1)";
+                        })(),
+                      }}
+                    >
+                      <Text
+                        style={{
+                          textAlign: "center",
+                          color: (() => {
+                            if (degisim > 0) {
+                              return "rgb(0, 255, 0)";
+                            }
+                            if (degisim === 0) {
+                              return "rgb(125, 125, 125)";
+                            }
+                            return "rgb(255, 0, 0)";
+                          })(),
+                          fontSize: 28,
+                          fontWeight: 300, // Font weight should be a string
+                        }}
+                      >
+                        {item.Değişim.replace(/-/g, "")}
+                      </Text>
                     </View>
                   </View>
-                </TouchableOpacity>
-              );
-            }}
-          />
-        )
-      ) : (
-        <Loading text={"yükleniyor..."} />
+                </View>
+              </TouchableOpacity>
+            );
+          }}
+        />
       )}
     </View>
   );

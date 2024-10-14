@@ -1,7 +1,10 @@
 import "react-native-gesture-handler";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, Text } from "react-native";
 import { useState, useEffect } from "react";
-import { createStackNavigator } from "@react-navigation/stack";
+import {
+  createStackNavigator,
+  CardStyleInterpolators,
+} from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
 import Login from "./screens/Login";
@@ -17,11 +20,59 @@ import { RootSiblingParent } from "react-native-root-siblings";
 import ForgotPassword from "./screens/ForgotPassword";
 import { auth } from "./Firebase";
 import { Feather } from "@expo/vector-icons";
-import { db } from "./Firebase";
-import { doc, getDoc } from "firebase/firestore";
+import Toast, { BaseToast, ErrorToast } from "react-native-toast-message";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
+const toastConfig = {
+  success: (props) => (
+    <BaseToast
+      {...props}
+      style={{ borderLeftColor: "green", backgroundColor: "transparent" }}
+      contentContainerStyle={{ paddingHorizontal: 15 }}
+      text1Style={{
+        fontSize: 15,
+        color: "white",
+        fontWeight: "400",
+      }}
+    />
+  ),
 
+  error: (props) => (
+    <ErrorToast
+      {...props}
+      text1Style={{
+        fontSize: 17,
+      }}
+      text2Style={{
+        fontSize: 15,
+      }}
+    />
+  ),
+
+  tomatoToast: ({ text1, props }) => (
+    <View
+      style={{
+        height: 40,
+        width: "100%",
+        backgroundColor: "rgb(100, 255, 100)",
+        padding: 10,
+      }}
+    >
+      <Text
+        style={{
+          color: "black",
+          fontSize: 15,
+          fontWeight: "bold",
+          textAlign: "center",
+        }}
+      >
+        {text1}
+      </Text>
+      {/* <Text>{props.uuid}</Text> */}
+    </View>
+  ),
+};
 function MainScreen({ route }) {
   const { userId, userEmail } = route.params;
   return (
@@ -160,14 +211,18 @@ export default function App() {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    auth.onAuthStateChanged((user) => {
+    const auth = getAuth(); // Firebase Auth nesnesini al
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         setUser(user);
-        setInitialRoute("Login");
-      } else {
         setInitialRoute("MainScreen");
+      } else {
+        setInitialRoute("Login");
       }
     });
+
+    // Bileşen kaldırıldığında dinleyiciyi temizle
+    return () => unsubscribe();
   }, []);
 
   return (
@@ -176,7 +231,10 @@ export default function App() {
         <NavigationContainer>
           <Stack.Navigator
             initialRouteName={initialRoute}
-            screenOptions={{ headerShown: false }}
+            screenOptions={{
+              headerShown: false,
+              cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+            }}
           >
             {user && (
               <Stack.Screen
@@ -192,6 +250,7 @@ export default function App() {
             <Stack.Screen name="Register" component={Register} />
             <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
           </Stack.Navigator>
+          <Toast visibilityTime={3000} config={toastConfig} />
         </NavigationContainer>
       </RootSiblingParent>
     </PaperProvider>

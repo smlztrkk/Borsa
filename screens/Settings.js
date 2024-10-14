@@ -16,10 +16,10 @@ import { db } from "../Firebase";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 
 export default function Settings({ navigation, route }) {
-  const { userId } = route.params;
-  const { userEmail } = route.params;
+  const { userId, userEmail } = route.params;
   const [modalVisible, setModalVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoading1, setIsLoading1] = useState(false);
   const [secilenFotoIndex, setSecilenFotoIndex] = useState("");
 
   const profilFotograflari = [
@@ -30,9 +30,8 @@ export default function Settings({ navigation, route }) {
     require("../img/woman.jpeg"),
     require("../img/woman0.jpeg"),
     require("../img/woman1.jpeg"),
-    // Diğer resimleriniz...
   ];
-
+  //!profil fotoğrafı indexini çekme işlemi
   useEffect(() => {
     const fetchProfilFotoIndex = async () => {
       try {
@@ -55,6 +54,8 @@ export default function Settings({ navigation, route }) {
     fetchProfilFotoIndex();
   }, [userId, secilenFotoIndex]);
 
+  //! çıkış yapma işlemi
+
   const SingOut = async () => {
     setIsLoading(true);
     try {
@@ -62,7 +63,6 @@ export default function Settings({ navigation, route }) {
       try {
         const userDocRef = doc(db, "users", "ZsoGUB26cuqmbKfym02t");
         setDoc(userDocRef, {
-          uid: "",
           password: "",
           email: "",
         });
@@ -80,6 +80,8 @@ export default function Settings({ navigation, route }) {
       setIsLoading(false);
     }
   };
+
+  //! avatarlar için modal
 
   const renderItem = ({ item, index }) => (
     <Pressable
@@ -99,6 +101,8 @@ export default function Settings({ navigation, route }) {
       />
     </Pressable>
   );
+
+  //!fotoğrafların indexlerini kayıt işlemi
 
   const handleProfilFotografiSec = async (secilenFotoIndex) => {
     try {
@@ -131,13 +135,17 @@ export default function Settings({ navigation, route }) {
     }
   };
 
+  //!kullanıcı hesabı silme işlemi
+
   const KullaniciSil = async () => {
+    setIsLoading1(true);
     const user = auth.currentUser;
     try {
       user.delete();
       console.log("Hesap Silindi", "Hesabınız başarıyla silindi.");
 
       navigation.navigate("Login");
+      setIsLoading1(false);
     } catch (error) {
       console.error("Hesap silme hatası:", error);
     }
@@ -194,7 +202,7 @@ export default function Settings({ navigation, route }) {
           </View>
         </View>
 
-        <View style={{ width: "70%" }}>
+        <View style={{ width: "80%" }}>
           <TouchableOpacity
             onPress={SingOut}
             style={{
@@ -209,20 +217,16 @@ export default function Settings({ navigation, route }) {
           >
             {isLoading ? (
               <View style={{}}>
-                <ActivityIndicator
-                  animating={true}
-                  color={"rgba(31,200,200,1)"}
-                  size={30}
-                />
+                <ActivityIndicator animating={true} color={"white"} size={30} />
               </View>
             ) : (
-              <Text style={{ fontSize: 20, fontWeight: 500, color: "white" }}>
+              <Text style={{ fontSize: 20, fontWeight: 400, color: "white" }}>
                 Çıkış Yap
               </Text>
             )}
           </TouchableOpacity>
         </View>
-        <View style={{ width: "70%" }}>
+        <View style={{ width: "80%" }}>
           <TouchableOpacity
             onPress={() => navigation.push("ForgotPassword")}
             style={{
@@ -235,12 +239,12 @@ export default function Settings({ navigation, route }) {
               backgroundColor: "rgba(31,67,200,0.7)",
             }}
           >
-            <Text style={{ fontSize: 20, fontWeight: 500, color: "white" }}>
+            <Text style={{ fontSize: 20, fontWeight: 400, color: "white" }}>
               Şifre değiştir
             </Text>
           </TouchableOpacity>
         </View>
-        <View style={{ width: "70%" }}>
+        <View style={{ position: "absolute", bottom: 100, width: "80%" }}>
           <TouchableOpacity
             onPress={() => KullaniciSil()}
             style={{
@@ -250,12 +254,18 @@ export default function Settings({ navigation, route }) {
               padding: 10,
               justifyContent: "center",
               alignItems: "center",
-              backgroundColor: "rgba(255,0,0,0.7)",
+              backgroundColor: "rgba(200,0,0,1)",
             }}
           >
-            <Text style={{ fontSize: 20, fontWeight: 500, color: "white" }}>
-              Hesabı Sil
-            </Text>
+            {isLoading1 ? (
+              <View style={{}}>
+                <ActivityIndicator animating={true} color={"white"} size={30} />
+              </View>
+            ) : (
+              <Text style={{ fontSize: 20, fontWeight: 300, color: "white" }}>
+                Hesabı Sil
+              </Text>
+            )}
           </TouchableOpacity>
         </View>
       </View>

@@ -7,7 +7,7 @@ import {
   ScrollView,
   ActivityIndicator,
 } from "react-native";
-
+import Toast, { BaseToast, ErrorToast } from "react-native-toast-message";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -18,13 +18,74 @@ export default function ForgotPassword({ navigation }) {
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
+  const toastConfig = {
+    success: (props) => (
+      <BaseToast
+        {...props}
+        style={{ borderLeftColor: "green", backgroundColor: "transparent" }}
+        contentContainerStyle={{ paddingHorizontal: 15 }}
+        text1Style={{
+          fontSize: 15,
+          color: "white",
+          fontWeight: "400",
+        }}
+      />
+    ),
+
+    error: (props) => (
+      <ErrorToast
+        style={{
+          height: 50,
+          backgroundColor: "rgba(255, 50, 50,0.5)",
+          padding: 10,
+          borderLeftColor: "red",
+        }}
+        {...props}
+        text1Style={{
+          color: "white",
+          fontSize: 17,
+        }}
+        text2Style={{
+          fontSize: 15,
+        }}
+      />
+    ),
+
+    tomatoToast: ({ text1, props }) => (
+      <View
+        style={{
+          height: 50,
+          width: "100%",
+          backgroundColor: "rgb(100, 255, 100)",
+          padding: 5,
+        }}
+      >
+        <Text
+          style={{
+            color: "black",
+            fontSize: 15,
+            fontWeight: "bold",
+            textAlign: "center",
+          }}
+        >
+          {text1}
+        </Text>
+        {/* <Text>{props.uuid}</Text> */}
+      </View>
+    ),
+  };
+  //!şifre sıfırlama işlemi
 
   const ResetPassword = async () => {
     setIsLoading(true);
     try {
       await auth.sendPasswordResetEmail(email).then(() => {
         setIsLoading(false);
-        navigation.push("Login");
+        Toast.show({
+          type: "tomatoToast",
+          text1: email + " Eposta adresine sıfırlama bağlantısı gönderildi",
+          props: { uuid: "bba1a7d0-6ab2-4a0a-a76e-ebbe05ae6d70" },
+        });
       });
     } catch (error) {
       setIsLoading(false);
@@ -34,7 +95,16 @@ export default function ForgotPassword({ navigation }) {
   return (
     <SafeAreaView style={styles.mainview}>
       <ScrollView>
-        <View style={{ width: "70%", marginTop: 20, marginLeft: "10%" }}>
+        <View
+          style={{
+            width: "10%",
+            height: "7%",
+            marginTop: 5,
+            marginLeft: "10%",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
           <TouchableOpacity
             onPress={() => {
               navigation.goBack();
@@ -52,7 +122,7 @@ export default function ForgotPassword({ navigation }) {
             flex: 7,
             justifyContent: "center",
             alignItems: "center",
-            marginTop: 20,
+            marginTop: 50,
           }}
         >
           <Image
@@ -65,7 +135,8 @@ export default function ForgotPassword({ navigation }) {
             flex: 3,
             justifyContent: "center",
             alignItems: "center",
-            margin: 20,
+            marginTop: 50,
+            marginBottom: 20,
           }}
         >
           <Text style={{ fontSize: 32, fontWeight: 900, color: "white" }}>
@@ -116,16 +187,15 @@ export default function ForgotPassword({ navigation }) {
         <View
           style={{
             flex: 10,
+            height: 70,
             justifyContent: "center",
             alignItems: "center",
-            marginTop: 20,
           }}
         >
           <View style={{ width: "70%" }}>
             <TouchableOpacity
               onPress={ResetPassword}
               style={{
-                width: "100%",
                 height: 50,
                 borderRadius: 20,
                 padding: 10,
@@ -138,7 +208,7 @@ export default function ForgotPassword({ navigation }) {
                 <View style={{}}>
                   <ActivityIndicator
                     animating={true}
-                    color={"rgba(31,200,200,1)"}
+                    color={"white"}
                     size={30}
                   />
                 </View>
@@ -151,6 +221,7 @@ export default function ForgotPassword({ navigation }) {
           </View>
         </View>
       </ScrollView>
+      <Toast visibilityTime={5000} config={toastConfig} />
     </SafeAreaView>
   );
 }

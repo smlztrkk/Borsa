@@ -22,6 +22,14 @@ export default function Explore() {
   const [financeData, setFinanceData] = useState(null);
   const [responseData, setResponseData] = useState(null);
 
+  const hissesenedi = "https://api.collectapi.com/economy/hisseSenedi";
+
+  const Api = "apikey 18bbvt4R0ZNSfXt6QNVbRt:6EL2kgzugiD4sy9XkE6rGc";
+  const smlztrkk2001 = "apikey 1KvoXE5NLfHkuNKbgMXmLR:6m5jUXdBXRnqSwnXxi4ycO";
+  const Api2 = "apikey 3QFnPhlvL0Bc7W7c8imeDa:4X52g11L50nHGDA4jX1TZM";
+  const Emrecan = "apikey 2A0tuHrD0rsii3GZ7zMFkw:3C6K8mpuHg64lzEGdevoGI";
+  const enes = "apikey 1toPpXebPyR3DkcVUY9lr1:1WB9IbzzRXUabANgzycQs0";
+
   const fetcDhData = async () => {
     setIsLoading(true);
     try {
@@ -31,7 +39,6 @@ export default function Explore() {
 
       setFinanceData(response.data);
 
-      //console.log(response.data);
       setIsLoading(false);
     } catch (error) {
       alert("Bir hata oluştu:", error);
@@ -41,15 +48,6 @@ export default function Explore() {
     fetcDhData();
   }, []);
 
-  const hissesenedi = "https://api.collectapi.com/economy/hisseSenedi";
-  const döviz =
-    "https://api.collectapi.com/economy/currencyToAll?int=1&base=TRY";
-
-  const Api = "apikey 18bbvt4R0ZNSfXt6QNVbRt:6EL2kgzugiD4sy9XkE6rGc";
-  const smlztrkk2001 = "apikey 1KvoXE5NLfHkuNKbgMXmLR:6m5jUXdBXRnqSwnXxi4ycO";
-  const Api2 = "apikey 3QFnPhlvL0Bc7W7c8imeDa:4X52g11L50nHGDA4jX1TZM";
-  const Emrecan = "apikey 2A0tuHrD0rsii3GZ7zMFkw:3C6K8mpuHg64lzEGdevoGI";
-  const enes = "apikey 1toPpXebPyR3DkcVUY9lr1:1WB9IbzzRXUabANgzycQs0";
   const fetchHData = async () => {
     setIsLoading(true);
     try {
@@ -77,22 +75,11 @@ export default function Explore() {
     });
   }, []);
   {
-    /*const DovizUp = async () => {
-    setIsLoading(true);
-    try {
-      const docRef = await updateDoc(doc(db, "Data", "eWser7DqScJIIDd3PYVW"), {
-        response: financeData,
-      });
-      console.log("başarılı döviz ");
-      setIsLoading(false);
-    } catch (e) {
-      console.error("Error adding document: ", e);
-    }
-  };*/
   }
-  //console.log(responseData);
+
   let date = new Date();
   const HisseUp = async () => {
+    setIsLoading(true);
     try {
       if (responseData != null) {
         const docRef = await updateDoc(
@@ -102,6 +89,7 @@ export default function Explore() {
             responseData,
           }
         );
+        setIsLoading(false);
         console.log("başarılı hisse");
       } else {
         console.log("responseData null");
@@ -111,6 +99,7 @@ export default function Explore() {
     }
   };
   const DovizUp = async () => {
+    setIsLoading(true);
     let date = new Date();
     try {
       if (financeData != null) {
@@ -128,7 +117,7 @@ export default function Explore() {
             financeArray,
           }
         );
-
+        setIsLoading(false);
         console.log("Başarılı döviz");
       } else {
         console.log("financeData null");
@@ -287,23 +276,21 @@ export default function Explore() {
         </View>
       </View>
 
-      {!isLoading ? (
-        //* financeData || responseData  ?  */
-        button ? (
-          financeData != null ? (
-            <View style={{ paddingBottom: 0 }}>
-              <Doviz financeData={financeData} />
-            </View>
-          ) : (
-            <Loading text={text} />
-          )
-        ) : fdata.length > 0 ? (
-          <View>
-            <HisseSenedi fdata={fdata} />
+      {isLoading ? (
+        <Loading text={text} />
+      ) : //* financeData || responseData  ?  */
+      button ? (
+        financeData != null ? (
+          <View style={{ paddingBottom: 0 }}>
+            <Doviz financeData={financeData} />
           </View>
         ) : (
           <Loading text={text} />
         )
+      ) : fdata.length > 0 ? (
+        <View>
+          <HisseSenedi fdata={fdata} />
+        </View>
       ) : (
         <Loading text={text} />
       )}

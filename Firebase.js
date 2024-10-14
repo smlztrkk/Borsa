@@ -1,30 +1,34 @@
-// Import the functions you need from the SDKs you need
-import firebase from "firebase/compat/app";
-import "firebase/compat/auth";
 import { initializeApp } from "firebase/app";
+import {
+  initializeAuth,
+  getReactNativePersistence,
+  getAuth,
+} from "firebase/auth";
+import ReactNativeAsyncStorage from "@react-native-async-storage/async-storage";
 import { getFirestore } from "firebase/firestore";
-//import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyDE5puAF1Gwwh8rYc7IXQHhTa714vCsh0o",
   authDomain: "login-register-b8d6f.firebaseapp.com",
+  databaseURL: "https://login-register-b8d6f-default-rtdb.firebaseio.com",
   projectId: "login-register-b8d6f",
   storageBucket: "login-register-b8d6f.appspot.com",
   messagingSenderId: "885742403961",
   appId: "1:885742403961:web:a17ffa0ea480d31d56efa8",
-  measurementId: "G-B4L3YJSCH1",
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
-if (!firebase.apps.length) {
-  firebase.initializeApp(firebaseConfig);
+
+// Firebase Auth'un zaten başlatılıp başlatılmadığını kontrol edin
+let auth;
+if (!app._isInitializedAuth) {
+  auth = initializeAuth(app, {
+    persistence: getReactNativePersistence(ReactNativeAsyncStorage),
+  });
+  app._isInitializedAuth = true;
+} else {
+  auth = getAuth(app); // Eğer zaten başlatıldıysa, mevcut auth'u alın
 }
-//export const analytics = getAnalytics(app);
-const auth = firebase.auth();
+
 const db = getFirestore(app);
+
 export { auth, db };

@@ -34,6 +34,8 @@ export default function Search({ route }) {
   const [searchQuery, setSearchQuery] = useState("");
   const text = "Arayınız...";
 
+  //! hisse senedi veri alma işlemi
+
   const getData = async () => {
     setIsLoading(true);
     try {
@@ -58,6 +60,9 @@ export default function Search({ route }) {
       console.error("Veri alma hatası:", error);
     }
   };
+
+  //!döviz veri alma işlemi
+
   const getFinanceData = async () => {
     setIsLoading(true);
     try {
@@ -82,15 +87,18 @@ export default function Search({ route }) {
       console.error("Veri alma hatası:", error);
     }
   };
+
   useEffect(() => {
     getData();
     getFinanceData();
   }, []);
+
+  //? aranan verileri filtreleme işlemi  ----------------------------
+
   const target = fdata.filter(
     (item) => ara.includes(item.code) || ara.includes(item.text)
   );
 
-  //const target2 = ffdataArray.filter((item) => ara.includes(item));
   let filteredData = [];
   if (ffdata) {
     filteredData = ffdata.filter((item) => {
@@ -98,10 +106,12 @@ export default function Search({ route }) {
     });
   }
 
+  //?------------------------------------------------------
+
   const target2 = filteredData;
-  //console.log(target2[0]);
-  //console.log(selectedId);
-  //todo arama kısmını ve görünümü düzelt
+
+  //! izleme listesine hisse ekleme
+
   const HisseEkle = async (target) => {
     setIsLoading(true);
 
@@ -146,6 +156,9 @@ export default function Search({ route }) {
       setIsLoading(false);
     }
   };
+
+  //!izleme listesine döviz ekleme
+
   const DovizEkle = async (target) => {
     setIsLoading(true);
 
@@ -215,9 +228,13 @@ export default function Search({ route }) {
             style={{
               backgroundColor: "rgb(27,38,44)",
               width: "65%",
-
               margin: 10,
-              height: 50,
+              height: 55,
+              borderRightWidth: 1,
+              borderLeftWidth: 1,
+              borderTopWidth: 0,
+              borderBottomWidth: 5,
+              borderColor: "rgba(31,67,200,0.7)",
             }}
             color="white"
             elevation={5}
@@ -430,8 +447,12 @@ export default function Search({ route }) {
                       alignItems: "center",
                       borderWidth: 1,
                       borderColor: (() => {
-                        if (degisim > 0) return "rgba(0, 255, 0,0.5)";
-                        if (degisim === 0) return "rgba(125, 125, 125,0.5)";
+                        if (degisim > 0) {
+                          return "rgba(0, 255, 0,0.5)";
+                        }
+                        if (degisim === 0) {
+                          return "rgba(125, 125, 125,0.5)";
+                        }
                         return "rgba(255, 0, 0,0.5)";
                       })(),
                     }}
@@ -489,8 +510,12 @@ export default function Search({ route }) {
                       <Text
                         style={{
                           color: (() => {
-                            if (degisim > 0) return "rgb(0, 255, 0)";
-                            if (degisim === 0) return "rgb(125, 125, 125)";
+                            if (degisim > 0) {
+                              return "rgb(0, 255, 0)";
+                            }
+                            if (degisim === 0) {
+                              return "rgb(125, 125, 125)";
+                            }
                             return "rgb(255, 0, 0)";
                           })(),
                           fontSize: 16,
